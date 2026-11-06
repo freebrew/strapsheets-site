@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://strapsheets.agent-swarm.net/sitemap.xml

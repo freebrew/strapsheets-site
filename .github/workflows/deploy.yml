@@ -1,0 +1,33 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ASTRO_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Upload public_html
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: strapsheets.agent-swarm.net
+          username: ${{ secrets.VIRTUALMIN_SSH_USER }}
+          key: ${{ secrets.VIRTUALMIN_SSH_KEY }}
+          source: "dist/*"
+          target: "public_html"
+          strip_components: 1
+          overwrite: true

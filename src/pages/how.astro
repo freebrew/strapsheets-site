@@ -1,0 +1,31 @@
+---
+import Base from "../layouts/Base.astro";
+const tools = [
+  "Motor",
+  "NM Slick Monel",
+  "NM Flex Monel",
+  "NM Pony",
+  "NM Stabilizer Carrier",
+  "Stabilized Sub",
+  "Subs",
+  "Lifting Subs",
+  "Jars",
+  "Shock Sub",
+  "Exciter / Agitator / Sidewinder",
+  "Orbit",
+];
+---
+<Base title="How StrapSheets works" description="The twelve standard tools and the path from measurement to PDF.">
+  <h1>How it works</h1>
+  <ol>
+    <li>Pick the job number and the tool.</li>
+    <li>Enter the serial, the ends, the threads, and the measurements the sheet asks for.</li>
+    <li>Confirm the card. The phone draws the PDF on the device.</li>
+    <li>Send opens your mail app with the PDF attached. You press Send there.</li>
+  </ol>
+  <h2>The twelve tools</h2>
+  <ul>
+    {tools.map((tool) => <li>{tool}</li>)}
+  </ul>
+  <p>A thirteenth tool, Custom, lets you mark a tube yourself. That builder is part of Pro.</p>
+</Base>

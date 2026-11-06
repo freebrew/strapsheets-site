@@ -1,0 +1,2 @@
+# StrapSheets. Replace this comment with the AdMob publisher line when the AdMob account exists:
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

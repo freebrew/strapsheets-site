@@ -1,0 +1,39 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const links = [
+  ["/", "Home"],
+  ["/how", "How it works"],
+  ["/pricing", "Pricing"],
+  ["/support", "Support"],
+  ["/privacy", "Privacy"],
+  ["/terms", "Terms"],
+];
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="stylesheet" href="/site.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/">StrapSheets</a>
+      <nav>
+        {links.map(([href, label]) => <a href={href}>{label}</a>)}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>StrapSheets is published by an individual developer. The store listing shows the legal name.</p>
+      <p>Privacy and Terms on this site are a working draft dated 6 November 2026. Have them read before the apps go on sale.</p>
+    </footer>
+  </body>
+</html>
