@@ -8,30 +8,25 @@ import "./scene.css";
 
 /**
  * Inventory workflow preview. Not a shipped file browser.
- * Wide 460×300 keeps both folders. Compact 358×250, used at 390 and 407,
- * keeps Job 1044, the Motor file and the count. The Sub folder is removed.
- * No crop. Minimum text is 12px.
+ * Rows stay mounted and morph from saved entries into family folders.
  */
 
-type Tree = { motor: boolean; motorFile: boolean; sub: boolean; subFile: boolean; count: number };
+type Tree = { step: number; count: number };
 
-const OPEN: Tree = { motor: false, motorFile: false, sub: false, subFile: false, count: 0 };
-const POSTER: Tree = { motor: true, motorFile: true, sub: true, subFile: true, count: 2 };
+const OPEN: Tree = { step: 1, count: 2 };
+const POSTER: Tree = { step: 4, count: 5 };
 
 const script = async (a: Act<Tree>) => {
   await whenBhaComplete();
   a.mark("open");
-  await a.wait(280);
-  await a.set({ motor: true });
-  a.mark("motor");
-  await a.wait(460);
-  await a.set({ motorFile: true, count: 1 });
+  await a.wait(260);
+  await a.set({ step: 2, count: 3 });
   a.mark("motor-file");
-  await a.wait(460);
-  await a.set({ sub: true });
-  a.mark("sub");
-  await a.wait(420);
-  await a.set({ subFile: true, count: 2 });
+  await a.wait(380);
+  await a.set({ step: 3, count: 4 });
+  a.mark("sub-file");
+  await a.wait(380);
+  await a.set({ step: 4, count: 5 });
   a.mark("payoff");
   await a.wait(2000);
 };
@@ -41,39 +36,52 @@ export function DirectoryPreview() {
   return (
     <Faux id="directory">
       <Stage
-        width={460}
-        height={300}
+        width={420}
+        height={290}
         theme={theme}
         greys="cool"
         play="once"
         initial={OPEN}
         poster={POSTER}
-        compact={{ below: 480, width: 358, height: 250 }}
+        compact={{ below: 450, width: 358, height: 260 }}
         script={script}
       >
         {(s, _rect, layout) => (
           <div className="tree-scene" data-crop>
+            <div className="tree-kicker-row">
+              <span className="bha-kicker">INVENTORY WORKFLOW PREVIEW</span>
+              <Badge tone="neutral">{s.count} PDFs</Badge>
+            </div>
             <div className="tree">
-              <div className="tree-job"><Icon name="archive" /><strong>Job 1044</strong><Badge tone="neutral">{s.count}</Badge></div>
-              {s.motor ? (
-                <div className="tree-folder">
-                  <div><Icon name="archive" /><span>Motor</span></div>
-                  {s.motorFile ? <div className="tree-file"><Icon name="file" /><span>MTR-4418.pdf</span></div> : null}
+              <div className="tree-job">
+                <Icon name="archive" />
+                <strong>Job 1044 /</strong>
+                <span className="tree-meta">Sorted by family</span>
+              </div>
+              <div className="tree-folder" data-on={s.step >= 1 || undefined}>
+                <div className="tree-row-head"><Icon name="archive" /><span>Motor/</span></div>
+                <div className="tree-file" data-lit={s.step === 2 || undefined}>
+                  <Icon name="file" /><span>MTR-4418.pdf</span><em>9.42 m · 6.75″</em>
                 </div>
-              ) : null}
-              {layout === "wide" && s.sub ? (
-                <div className="tree-folder">
-                  <div><Icon name="archive" /><span>Sub</span></div>
-                  {s.subFile ? <div className="tree-file"><Icon name="file" /><span>SUB-2201.pdf</span></div> : null}
+              </div>
+              <div className="tree-folder" data-on={s.step >= 2 || undefined}>
+                <div className="tree-row-head"><Icon name="archive" /><span>Subs/</span></div>
+                <div className="tree-file" data-lit={s.step === 3 || undefined}>
+                  <Icon name="file" /><span>SUB-2201.pdf</span><em>0.82 m · 6.50″</em>
                 </div>
-              ) : null}
-              <div className="tree-folder"><div><Icon name="archive" /><span>Jars</span></div></div>
-              <div className="tree-folder"><div><Icon name="archive" /><span>Shock Sub</span></div></div>
-              <div className="tree-folder"><div><Icon name="archive" /><span>NM Pony</span></div></div>
-              <div className="tree-file"><Icon name="file" /><span>JAR-1180.pdf</span></div>
-              <div className="tree-file"><Icon name="file" /><span>SHK-14.pdf</span></div>
-              <div className="tree-folder"><div><Icon name="archive" /><span>Bit</span></div></div>
-              <div className="tree-file"><Icon name="file" /><span>BIT-8.pdf</span></div>
+              </div>
+              {layout === "wide" && (
+                <div className="tree-folder" data-on={s.step >= 3 || undefined}>
+                  <div className="tree-row-head"><Icon name="archive" /><span>Custom/</span></div>
+                  <div className="tree-file" data-lit={s.step === 4 || undefined}>
+                    <Icon name="file" /><span>CUST-204.pdf</span><em>11.40 m · 8.25″</em>
+                  </div>
+                </div>
+              )}
+              <div className="tree-folder" data-on>
+                <div className="tree-row-head"><Icon name="archive" /><span>Jars &amp; Shock/</span></div>
+                <div className="tree-file"><Icon name="file" /><span>JAR-1180.pdf · SHK-14.pdf</span><em>5.53 m</em></div>
+              </div>
             </div>
           </div>
         )}

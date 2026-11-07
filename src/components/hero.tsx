@@ -1,100 +1,138 @@
 import { Stage } from "../stageshow/kit/stage";
 import type { Act } from "../stageshow/kit/act";
 import { Phone } from "../stageshow/kit/phone";
-import { Keyboard } from "../stageshow/kit/ios";
-import { Field } from "../stageshow/kit/controls/Field";
-import { Button } from "../stageshow/kit/controls/Button";
-import { Icon } from "../stageshow/kit/parts/Icon";
-import { Row } from "../stageshow/kit/parts/Row";
 import { silhouettes } from "../generated/silhouettes.mjs";
 import { Faux, useSiteTheme } from "../lib/theme";
 import "./scene.css";
 
 /**
- * Measured entry is the shipped product and the only looping scene.
- * Wide 760×520: phone, motor drawing, pad, confirm rows, yellow card.
- * Compact 358×460, used at 390 and 407: retained are the lit letter, the
- * value being typed, the confirm rows and the yellow card. Removed are the
- * number pad and the second material choice. Crop is the phone below the
- * card. Minimum text is 12px.
+ * Dual-process morphing hero modeled on the real dark-theme StrapSheets app:
+ *   1. BOX / PIN Config & Thread Type (one section for BOX, one section for PIN)
+ *   2. Process 1 — Standard Measured Entry (Motor / Subs): spotlight ring glides
+ *      across callout letters A -> B -> D as measurements fill the confirm rows
+ *   3. Process 2 — Custom Builder: ends morph from BOX/PIN config (left PIN · DS 38,
+ *      right BOX · 4 1/2 IF) with A Upset OD, B Spiral OD (half-density hatch), C Length
+ *   4. Payoff — Confirm & Printed Yellow Strap Sheet Card
  */
 
-type Step = "serial" | "material" | "measure" | "confirm";
+type Mode = "boxpin" | "measure-a" | "measure-b" | "custom" | "confirm";
 
 type Scene = {
-  step: Step;
-  serial: string;
-  material: string;
-  length: string;
-  od: string;
-  focus: "" | "serial" | "length" | "od";
-  mail: boolean;
-  lit: "" | "A" | "B";
+  mode: Mode;
+  ring: "A" | "B" | "D";
+  lenVal: string;
+  odVal: string;
   rows: number;
-  metric: boolean;
+  card: boolean;
 };
 
 const START: Scene = {
-  step: "serial", serial: "", material: "", length: "", od: "", focus: "serial", mail: false, lit: "", rows: 0, metric: false,
+  mode: "boxpin",
+  ring: "A",
+  lenVal: "9.42",
+  odVal: "6.75",
+  rows: 2,
+  card: false,
 };
+
 const POSTER: Scene = {
-  step: "confirm", serial: "MTR-4418", material: "Steel", length: "9.42", od: "6.75", focus: "", mail: false, lit: "", rows: 4, metric: true,
+  mode: "confirm",
+  ring: "B",
+  lenVal: "9.42",
+  odVal: "6.75",
+  rows: 4,
+  card: true,
 };
 
 const script = async (a: Act<Scene>) => {
-  await a.wait(500);
-  a.mark("serial");
-  await a.click("serial");
-  await a.type("serial", "MTR-4418", { interval: 55 });
-  await a.wait(280);
-  a.mark("material");
-  await a.set({ step: "material", focus: "" });
   await a.wait(420);
-  await a.click("steel");
-  await a.set({ material: "Steel" });
-  await a.wait(200);
-  a.mark("length");
-  await a.set({ step: "measure", focus: "length", lit: "A" });
-  await a.wait(240);
-  await a.click("length");
-  await a.type("length", "9.42", { interval: 70 });
-  await a.wait(180);
-  a.mark("od");
-  await a.click("od");
-  await a.set({ focus: "od", lit: "B" });
-  await a.type("od", "6.75", { interval: 70 });
-  await a.wait(240);
+  a.mark("boxpin");
+  await a.click("pick-pin");
+  await a.wait(360);
+  a.mark("measure-a");
+  await a.set({ mode: "measure-a", ring: "A", rows: 2 });
+  await a.wait(520);
+  a.mark("measure-b");
+  await a.click("field-od");
+  await a.set({ mode: "measure-b", ring: "B", rows: 3 });
+  await a.wait(520);
+  a.mark("custom");
+  await a.set({ mode: "custom", ring: "D", rows: 4 });
+  await a.wait(640);
   a.mark("confirm");
-  await a.click("confirm");
-  await a.set({ step: "confirm", focus: "", lit: "", rows: 1 });
-  await a.wait(260);
-  await a.set({ rows: 2 });
-  await a.wait(260);
-  await a.set({ rows: 3 });
-  await a.wait(260);
-  await a.set({ rows: 4, metric: true });
-  a.mark("metric");
+  await a.click("btn-review");
+  await a.set({ mode: "confirm", ring: "B", rows: 4, card: true });
   await a.wait(2000);
-  await a.click("send");
-  await a.set({ mail: true });
-  await a.wait(900);
-  await a.click("dismiss");
-  await a.set({ mail: false });
   a.mark("reset");
-  await a.wait(240);
+  await a.set({ card: false });
+  await a.move("pick-pin");
   await a.snap({ ...START });
-  await a.wait(400);
+  await a.wait(320);
 };
 
-function Motor({ lit }: { lit: Scene["lit"] }) {
-  const drawing = silhouettes.Motor;
+const RING_POS: Record<Scene["ring"], { x: number; y: number; label: string }> = {
+  A: { x: 14, y: 52, label: "A - Total Length" },
+  B: { x: 46, y: 42, label: "B - Upper OD" },
+  D: { x: 82, y: 48, label: "C - Custom Spiral OD" },
+};
+
+const CONFIRM_ROWS = [
+  ["Serial · Material", "MTR-4418 · Steel"],
+  ["BOX · Upper", "4 1/2 IF [NC 50]"],
+  ["PIN · Lower", "DS 38 [NC38]"],
+  ["A LEN · B OD", "9.42 m · 6.75 in"],
+];
+
+function MorphDiagram({ s }: { s: Scene }) {
+  const motor = silhouettes.Motor;
+  const spot = RING_POS[s.ring];
+  const isCustom = s.mode === "custom";
   return (
-    <div className="motor-wrap">
-      <svg viewBox={drawing.viewBox} role="img" aria-label="Motor">
-        <g dangerouslySetInnerHTML={{ __html: drawing.markup }} />
-      </svg>
-      <i className="flag" data-lit={lit === "A" || undefined} style={{ left: "6%" }}>A</i>
-      <i className="flag" data-lit={lit === "B" || undefined} style={{ left: "42%" }}>B</i>
+    <div className="hero-dg-frame" data-custom={isCustom || undefined}>
+      <div className="hero-dg-head">
+        <span>{isCustom ? "Custom · 5 of 5 · Builder" : "Motor · Measured Entry"}</span>
+        <em>Highlighted: {s.ring} on the drawing</em>
+      </div>
+      <div className="hero-dg-canvas">
+        <div className="hero-dg-layer" data-active={!isCustom || undefined}>
+          <svg viewBox={motor.viewBox} role="img" aria-label="Motor diagram">
+            <g dangerouslySetInnerHTML={{ __html: motor.markup }} />
+          </svg>
+        </div>
+        <div className="hero-dg-layer hero-dg-layer--custom" data-active={isCustom || undefined}>
+          <svg viewBox="0 0 680 150" role="img" aria-label="Custom builder diagram">
+            <text x="58" y="24" fill="var(--dg-ink)" fontSize="13" fontWeight="700" textAnchor="middle">PIN · DS 38</text>
+            <text x="612" y="24" fill="var(--dg-ink)" fontSize="13" fontWeight="700" textAnchor="middle">BOX · 4 1/2 IF</text>
+            <polygon
+              points="28,62 64,50 210,50 230,38 300,38 320,50 644,50 644,104 320,104 300,116 230,116 210,104 64,104 28,92"
+              fill="var(--dg-fill)"
+              stroke="var(--dg-ink)"
+              strokeWidth="2.5"
+            />
+            <line x1="38" y1="60" x2="38" y2="94" stroke="var(--dg-ink)" strokeWidth="1.4" />
+            <line x1="48" y1="56" x2="48" y2="98" stroke="var(--dg-ink)" strokeWidth="1.4" />
+            <line x1="58" y1="52" x2="58" y2="102" stroke="var(--dg-ink)" strokeWidth="1.4" />
+            <line x1="620" y1="66" x2="638" y2="66" stroke="var(--dg-ink)" strokeWidth="1.4" strokeDasharray="3 3" />
+            <line x1="620" y1="77" x2="638" y2="77" stroke="var(--dg-ink)" strokeWidth="1.4" strokeDasharray="3 3" />
+            <line x1="620" y1="88" x2="638" y2="88" stroke="var(--dg-ink)" strokeWidth="1.4" strokeDasharray="3 3" />
+            <polygon
+              points="385,50 402,34 478,34 495,50 495,104 478,120 402,120 385,104"
+              fill="var(--dg-bevel-core)"
+              stroke="var(--dg-ink)"
+              strokeWidth="2"
+            />
+            <line x1="402" y1="118" x2="438" y2="36" stroke="#858b97" strokeWidth="1.5" />
+            <line x1="426" y1="118" x2="462" y2="36" stroke="#858b97" strokeWidth="1.5" />
+            <line x1="450" y1="118" x2="484" y2="36" stroke="#858b97" strokeWidth="1.5" />
+          </svg>
+        </div>
+        <div
+          className="hero-spot-ring"
+          style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
+        >
+          <span>{s.ring}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -102,79 +140,96 @@ function Motor({ lit }: { lit: Scene["lit"] }) {
 function Paper({ on }: { on: boolean }) {
   return (
     <aside className="paper" data-on={on || undefined}>
-      <strong>MOTOR</strong>
-      <div className="sub">MTR-4418 · Steel</div>
+      <div className="paper-head">
+        <strong>MOTOR · MTR-4418</strong>
+        <span>BOX 4 1/2 IF · PIN DS 38</span>
+      </div>
       <div className="metric">
-        <div><span>A LEN</span><span>9.42</span></div>
-        <div><span>B OD</span><span>6.75</span></div>
+        <div><span>A LEN</span><span>9.42 m</span></div>
+        <div><span>B OD</span><span>6.75 in</span></div>
+        <div><span>D ID</span><span>2.81 in</span></div>
       </div>
     </aside>
   );
 }
 
-const CONFIRM = [
-  ["Serial", "MTR-4418"],
-  ["Material", "Steel"],
-  ["A LEN", "9.42"],
-  ["B OD", "6.75"],
-];
-
-function Screen({ s, compact }: { s: Scene; compact: boolean }) {
-  const digits = s.focus === "od" ? s.od : s.length;
+function Screen({ s }: { s: Scene }) {
   return (
     <div className="app-screen">
-      <header>
+      <header className="real-app-header">
         <strong>StrapSheets</strong>
-        <span>Job 1044</span>
+        <span className="job-link">Job 1044</span>
       </header>
-      <div className="panes">
-        <div className="pane" data-on={s.step === "serial" || undefined}>
-          <Field label="Serial" value={s.serial} focused={s.focus === "serial"} placeholder="Serial" box={{ "data-target": "serial" }} />
-        </div>
-        <div className="pane" data-on={s.step === "material" || undefined}>
-          <strong>Material</strong>
-          <div className="choice-row">
-            <Button data-target="steel" variant={s.material === "Steel" ? "primary" : "secondary"}>Steel</Button>
-            {compact ? null : <Button variant="secondary">Non Magnetic</Button>}
+
+      <MorphDiagram s={s} />
+
+      <div className="morph-stage-card" data-mode={s.mode}>
+        <div className="morph-section">
+          <div className="morph-section-head">
+            <strong>BOX PIN Config &amp; Thread Type</strong>
+            <span>Step 3–4</span>
+          </div>
+          <div className="boxpin-two-sections">
+            <div className="boxpin-box">
+              <span className="boxpin-tag">BOX · Upper</span>
+              <strong>4 1/2 IF [NC 50]</strong>
+            </div>
+            <div className="boxpin-box boxpin-box--pin" data-target="pick-pin">
+              <span className="boxpin-tag">PIN · Lower</span>
+              <strong>DS 38 [NC38]</strong>
+            </div>
           </div>
         </div>
-        <div className="pane" data-on={s.step === "measure" || undefined}>
-          <Motor lit={s.lit} />
-          <Field label="A LEN" value={s.length} focused={s.focus === "length"} box={{ "data-target": "length" }} />
-          <Field label="B OD" value={s.od} focused={s.focus === "od"} box={{ "data-target": "od" }} />
-          {compact ? null : (
-            <div className="pad" aria-hidden="true">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"].map((key) => (
-                <i key={key} data-down={digits.endsWith(key) || undefined}>{key}</i>
-              ))}
+
+        <div className="morph-section">
+          <div className="morph-section-head">
+            <strong>{s.mode === "custom" ? "Custom Shape & Station OD" : RING_POS[s.ring].label}</strong>
+            <span>{s.mode === "custom" ? "No Pin add-on" : "Number pad"}</span>
+          </div>
+          <div className="measure-dual-row">
+            <div className="measure-pill" data-active={s.ring === "A" || undefined}>
+              <span>A · Length</span>
+              <strong>{s.lenVal} m</strong>
             </div>
-          )}
+            <div className="measure-pill" data-target="field-od" data-active={s.ring === "B" || undefined}>
+              <span>B · Upper OD</span>
+              <strong>{s.odVal} in</strong>
+            </div>
+            <div className="measure-pill" data-active={s.ring === "D" || undefined}>
+              <span>Spiral OD</span>
+              <strong>8.25 in</strong>
+            </div>
+          </div>
         </div>
-        <div className="pane confirm" data-on={s.step === "confirm" || undefined}>
-          <strong>Motor</strong>
+
+        <div className="morph-section">
+          <div className="morph-section-head">
+            <strong>Confirm &amp; Card Summary</strong>
+            <span>Ready to email</span>
+          </div>
           <ul className="confirm-rows">
-            {CONFIRM.slice(0, s.rows).map(([label, value]) => (
-              <li key={label}><span>{label}</span><span>{value}</span></li>
+            {CONFIRM_ROWS.map(([label, value], idx) => (
+              <li key={label} data-lit={idx < s.rows || undefined}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </li>
             ))}
           </ul>
-          <div className="choice-row">
-            <Button variant="secondary">Back</Button>
-            <Button data-target="confirm" variant="secondary">Confirm</Button>
-            <Button data-target="send" variant="primary">Send</Button>
-          </div>
         </div>
       </div>
-      <div className="mail" data-on={s.mail || undefined} data-target="dismiss">
-        <div className="mail-head"><Icon name="mail" /><strong>Mail</strong></div>
-        <p>To the office</p>
-        <span className="file-chip"><Icon name="file" /> Motor.pdf</span>
+
+      <div className="real-nav-row">
+        <span className="real-btn-back">Back</span>
+        <span className="real-btn-next" data-target="btn-review">
+          {s.mode === "confirm" ? "Save & Email PDF" : "Review"}
+        </span>
       </div>
-      <div className="queue">
-        {["Sub · SUB-2201", "NM Pony · NMP-110", "Jars · JAR-1180", "Shock Sub · SHK-14", "Bit · BIT-8", "MWD · CR-204"].map((line) => (
-          <Row key={line} title={line.split(" · ")[0]} subtitle={line.split(" · ")[1]} pad={8} />
-        ))}
-      </div>
-      {s.step === "serial" ? <Keyboard typed={s.serial} shift dark suggestions={["MTR", "4418", "Serial"]} /> : null}
+
+      <nav className="real-tab-bar">
+        <span className="active">New entry</span>
+        <span>Sessions (3)</span>
+        <span>Settings</span>
+      </nav>
     </div>
   );
 }
@@ -185,24 +240,24 @@ export function HeroEntry() {
     <Faux id="hero">
       <Stage
         width={760}
-        height={520}
+        height={540}
         theme={theme}
         greys="cool"
         play="loop"
         initial={START}
         poster={POSTER}
-        compact={{ below: 700, width: 358, height: 460 }}
-        cursor={{ at: "serial", style: "touch", kind: "pointer" }}
+        compact={{ below: 700, width: 358, height: 480 }}
+        cursor={{ at: "pick-pin", style: "touch", kind: "pointer" }}
         script={script}
       >
         {(s, _rect, layout) => (
           <div className="scene">
             <div className="hero-phone" data-crop>
-              <Phone width={layout === "compact" ? 250 : 300} dark={theme === "dark"} time="06:40" wallpaper="var(--dg-surface)">
-                <Screen s={s} compact={layout === "compact"} />
+              <Phone width={layout === "compact" ? 260 : 310} dark={theme === "dark"} time="06:40" wallpaper="var(--dg-surface)">
+                <Screen s={s} />
               </Phone>
             </div>
-            <Paper on={s.metric} />
+            <Paper on={s.card} />
           </div>
         )}
       </Stage>
