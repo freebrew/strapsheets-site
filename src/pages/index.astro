@@ -12,6 +12,40 @@ if (!features) throw new Error("src/content/features.json is missing or failed i
 const latest = (await getCollection("releases")).sort((a, b) => b.data.date.localeCompare(a.data.date))[0];
 ---
 <Base title="StrapSheets" description="Strap sheets for drilling tools, filled in on the phone and emailed as a PDF." page="home">
+  <section class="feature-grid-section" aria-label="Technical Feature Grid">
+    <div class="feature-grid-header">
+      <span class="fg-coord">GRID // 01–05 · CONSOLE FIELD &amp; OFFICE WORKFLOW</span>
+      <h2>Built for the rig floor, the BHA sheet, and the office wall.</h2>
+    </div>
+
+    <div class="feature-grid">
+      <figure class="tile tile--bha">
+        <div class="cell"><BhaPreview client:only="react" /></div>
+        <figcaption><strong>Inventory Workflow Preview · Single-Column BHA.</strong> Tools stack from the bit up in a single vertical column. Additive total length updates at every station while Maximum OD (8.5″), Minimum OD (4.75″), and Minimum/Maximum Bore ID (2.00″ / 3.00″) are detected automatically.</figcaption>
+      </figure>
+
+      <figure class="tile tile--custom">
+        <div class="cell"><CustomMorphTile client:only="react" /></div>
+        <figcaption><strong>Screen Animation · Tools Data Entry &amp; Custom Ends from BOX PIN Config.</strong> One section for BOX (Upper / TOP) and one section for PIN (Lower / BTM) configure once, the active callout ring glides across the dark steel drawing as measurements fill in, and Custom ends morph onto the tube with OD shape chips and a step-18 spiral hatch.</figcaption>
+      </figure>
+
+      <figure class="tile tile--directory">
+        <div class="cell"><DirectoryPreview client:only="react" /></div>
+        <figcaption><strong>Inventory Workflow Preview · Job Directory.</strong> Saved serial PDFs organize into family folders under the active job number. Preview of the upcoming inventory workflow.</figcaption>
+      </figure>
+
+      <figure class="tile tile--theme">
+        <div class="cell"><ThemeMorphTile client:only="react" /></div>
+        <figcaption><strong>Dark Screen SVG ⇄ Light Print &amp; PDF.</strong> Screen diagrams render inline over <code>--dg-surface</code> for dark and light themes; printed sheets and PDFs stay crisp on light paper.</figcaption>
+      </figure>
+
+      <figure class="tile tile--wall">
+        <div class="cell"><WallTile client:only="react" /></div>
+        <figcaption><strong>Ticked Sessions to Sorted Wall Cards.</strong> Select the day’s tools and email one combined PDF formatted to hang in family order on the office wall.</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <section class="hero-copy">
     <div class="copy">
       <div class="hero-coord-badge">CONSOLE · FIELD &amp; OFFICE STRAP SHEETS</div>
@@ -36,39 +70,5 @@ const latest = (await getCollection("releases")).sort((a, b) => b.data.date.loca
       <div class="hero-stage"><HeroEntry client:only="react" /></div>
       <figcaption><strong>Two-process morphing workflow.</strong> BOX and PIN ends and thread types configure once, the active callout ring glides across the dark steel drawing, and the yellow metric block prints to PDF.</figcaption>
     </figure>
-  </section>
-
-  <section class="feature-grid-section" aria-label="Technical Feature Grid">
-    <div class="feature-grid-header">
-      <span class="fg-coord">GRID // 01–05</span>
-      <h2>Built for the rig floor, the BHA sheet, and the office wall.</h2>
-    </div>
-
-    <div class="feature-grid">
-      <figure class="tile tile--bha">
-        <div class="cell"><BhaPreview client:only="react" /></div>
-        <figcaption><strong>Inventory Workflow Preview · Single-Column BHA.</strong> Tools stack from the bit up in a single vertical column. Additive total length updates at every station while Maximum OD (8.5″), Minimum OD (4.75″), and Minimum/Maximum Bore ID (2.00″ / 3.00″) are detected automatically.</figcaption>
-      </figure>
-
-      <figure class="tile tile--custom">
-        <div class="cell"><CustomMorphTile client:only="react" /></div>
-        <figcaption><strong>Custom Ends from BOX PIN Config.</strong> One section for PIN (Lower / BTM left) and one section for BOX (Upper / TOP right) morph directly onto the tube with thread labels, OD shape chips, and a lighter step-18 spiral hatch.</figcaption>
-      </figure>
-
-      <figure class="tile tile--directory">
-        <div class="cell"><DirectoryPreview client:only="react" /></div>
-        <figcaption><strong>Inventory Workflow Preview · Job Directory.</strong> Saved serial PDFs organize into family folders under the active job number. Preview of the upcoming inventory workflow.</figcaption>
-      </figure>
-
-      <figure class="tile tile--theme">
-        <div class="cell"><ThemeMorphTile client:only="react" /></div>
-        <figcaption><strong>Dark Screen SVG ⇄ Light Print &amp; PDF.</strong> Screen diagrams render inline over <code>--dg-surface</code> for dark and light themes; printed sheets and PDFs stay crisp on light paper.</figcaption>
-      </figure>
-
-      <figure class="tile tile--wall">
-        <div class="cell"><WallTile client:only="react" /></div>
-        <figcaption><strong>Ticked Sessions to Sorted Wall Cards.</strong> Select the day’s tools and email one combined PDF formatted to hang in family order on the office wall.</figcaption>
-      </figure>
-    </div>
   </section>
 </Base>

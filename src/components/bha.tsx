@@ -61,7 +61,7 @@ export function BhaPreview() {
     <Faux id="bha">
       <Stage
         width={450}
-        height={690}
+        height={790}
         theme={theme}
         greys="cool"
         play="once"

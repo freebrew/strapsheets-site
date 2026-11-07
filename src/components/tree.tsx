@@ -37,13 +37,13 @@ export function DirectoryPreview() {
     <Faux id="directory">
       <Stage
         width={420}
-        height={290}
+        height={250}
         theme={theme}
         greys="cool"
         play="once"
         initial={OPEN}
         poster={POSTER}
-        compact={{ below: 450, width: 358, height: 260 }}
+        compact={{ below: 450, width: 358, height: 240 }}
         script={script}
       >
         {(s, _rect, layout) => (
