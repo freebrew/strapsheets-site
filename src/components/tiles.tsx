@@ -5,6 +5,7 @@ import { Window } from "../stageshow/kit/window";
 import { Badge } from "../stageshow/kit/controls/Badge";
 import { Row } from "../stageshow/kit/parts/Row";
 import { Icon } from "../stageshow/kit/parts/Icon";
+import { useSiteTheme } from "../lib/theme";
 import "./scene.css";
 
 type Tick = { on: boolean };
@@ -20,7 +21,7 @@ const tickScript = async (a: Act<Tick>) => {
 export function ConfirmTile() {
   return (
     <div id="tile-confirm">
-    <Stage width={520} height={220} theme="dark" greys="cool" compact={{ below: 560, width: 320, height: 200 }}>
+    <Stage width={520} height={220} theme={useSiteTheme()} greys="cool" compact={{ below: 560, width: 320, height: 200 }}>
       {(_s, _r, layout) => (
         <div className="scene letter-card">
           <svg width={layout === "compact" ? 120 : 210} height="84" viewBox="0 0 210 84" aria-hidden>
@@ -43,7 +44,7 @@ export function ConfirmTile() {
 export function StatTile() {
   return (
     <div id="tile-stat">
-    <Stage width={240} height={150} theme="dark" greys="cool" compact={{ below: 300, width: 220, height: 130 }}>
+    <Stage width={240} height={150} theme={useSiteTheme()} greys="cool" compact={{ below: 300, width: 220, height: 130 }}>
       {() => (
         <div className="stat-scene">
           <strong>14<span>tools</span></strong>
@@ -60,7 +61,7 @@ export function SessionTile() {
     <Stage
       width={300}
       height={150}
-      theme="dark"
+      theme={useSiteTheme()}
       greys="cool"
       play="loop"
       initial={{ on: false }}
@@ -89,7 +90,7 @@ export function SessionTile() {
 export function WallTile({ id = "tile-wall" }: { id?: string }) {
   return (
     <div id={id}>
-    <Stage width={260} height={180} theme="dark" greys="cool" compact={{ below: 300, width: 220, height: 160 }}>
+    <Stage width={260} height={180} theme={useSiteTheme()} greys="cool" compact={{ below: 300, width: 220, height: 160 }}>
       {() => (
         <div className="stack-scene">
           <div className="pile" aria-hidden>
@@ -107,7 +108,7 @@ export function WallTile({ id = "tile-wall" }: { id?: string }) {
 export function StatementTile() {
   return (
     <div id="tile-statement">
-    <Stage width={280} height={210} theme="dark" greys="cool" compact={{ below: 320, width: 240, height: 200 }}>
+    <Stage width={280} height={210} theme={useSiteTheme()} greys="cool" compact={{ below: 320, width: 240, height: 200 }}>
       {() => (
         <div className="statement">
           <strong>Capitals, number pad, no spelling fixes.</strong>
@@ -123,7 +124,7 @@ const STOCK = ["MTR-4418", "MTR-4419", "SUB-2201", "JAR-1180"];
 export function InventoryTile() {
   return (
     <div id="inventory">
-      <Stage width={420} height={280} theme="dark" greys="cool" compact={{ below: 480, width: 320, height: 200 }}>
+      <Stage width={420} height={280} theme={useSiteTheme()} greys="cool" compact={{ below: 480, width: 320, height: 200 }}>
         {(_s, _r, layout) => (
           <div className="inventory-scene">
             <div className="job">Job 1044 · on location</div>
@@ -141,7 +142,7 @@ export function InventoryTile() {
 export function HowPair() {
   return (
     <div id="how-pair">
-      <Stage width={860} height={420} theme="dark" greys="cool" compact={{ below: 800, width: 358, height: 280 }}>
+      <Stage width={860} height={420} theme={useSiteTheme()} greys="cool" compact={{ below: 800, width: 358, height: 280 }}>
         {(_s, _r, layout) => (
           <div className="scene pair-scene">
             <div className="sheet-window">
@@ -169,7 +170,7 @@ export function HowPair() {
 export function CustomTile() {
   return (
     <div id="custom-pro">
-      <Stage width={520} height={200} theme="dark" greys="cool" compact={{ below: 560, width: 320, height: 180 }}>
+      <Stage width={520} height={200} theme={useSiteTheme()} greys="cool" compact={{ below: 560, width: 320, height: 180 }}>
         {() => (
           <div className="custom-scene">
             <svg width="220" height="70" viewBox="0 0 220 70" aria-hidden>

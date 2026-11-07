@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { CustomTile, HowPair, StatTile, StatementTile } from "../components/tiles";
+import { CustomTile, HowPair, InventoryTile, SessionTile, StatTile, StatementTile } from "../components/tiles";
 
 const features = (await getCollection("features"))[0]?.data;
 if (!features) throw new Error("src/content/features.json is missing or failed its schema");
@@ -34,6 +34,14 @@ if (!features) throw new Error("src/content/features.json is missing or failed i
     <figure class="tile">
       <CustomTile client:only="react" />
       <figcaption><strong>Custom is Pro</strong> on the phone. The web sheet keeps it open.</figcaption>
+    </figure>
+    <figure class="tile">
+      <SessionTile client:only="react" />
+      <figcaption><strong>Tick and send.</strong> Today’s sheets, then your own mail app.</figcaption>
+    </figure>
+    <figure class="tile">
+      <InventoryTile client:only="react" />
+      <figcaption><strong>On-site inventory, coming.</strong> Pick a serial from the stock on location.</figcaption>
     </figure>
   </div>
 </Base>

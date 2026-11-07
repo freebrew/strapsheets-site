@@ -2,7 +2,9 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import { HeroEntry } from "../components/hero";
-import { ConfirmTile, InventoryTile, SessionTile, WallTile } from "../components/tiles";
+import { BhaPreview } from "../components/bha";
+import { DirectoryPreview } from "../components/tree";
+import { WallTile } from "../components/tiles";
 import { WEB_APP_URL } from "../site";
 
 const features = (await getCollection("features"))[0]?.data;
@@ -29,25 +31,24 @@ const latest = (await getCollection("releases")).sort((a, b) => b.data.date.loca
         · <a href="/releases">All Releases</a>
       </p>
     </div>
-    <div class="hero-stage"><HeroEntry client:only="react" /></div>
+    <figure class="hero-figure">
+      <div class="hero-stage"><HeroEntry client:only="react" /></div>
+      <figcaption>Measured entry. The letter you are typing is the one that lights on the motor, and the yellow block is the card.</figcaption>
+    </figure>
   </section>
 
   <div class="strip">
     <figure class="tile">
-      <div class="cell"><ConfirmTile client:only="react" /></div>
-      <figcaption><strong>The letter stays lit.</strong> The measure you are on is the one the drawing marks.</figcaption>
+      <div class="cell"><BhaPreview client:only="react" /></div>
+      <figcaption><strong>Inventory Workflow Preview.</strong> A string builds from the bit. Total length and the largest OD follow each tool.</figcaption>
     </figure>
     <figure class="tile">
-      <div class="cell"><SessionTile client:only="react" /></div>
-      <figcaption><strong>Tick and send.</strong> Today’s sheets, then your own mail app.</figcaption>
+      <div class="cell"><DirectoryPreview client:only="react" /></div>
+      <figcaption><strong>Inventory Workflow Preview.</strong> A job folder for a later inventory workflow. This is not a file browser the product ships today.</figcaption>
     </figure>
     <figure class="tile">
       <div class="cell"><WallTile client:only="react" /></div>
       <figcaption><strong>Sorted by family.</strong> One size, so a paper set hangs in order on the wall.</figcaption>
-    </figure>
-    <figure class="tile">
-      <div class="cell"><InventoryTile client:only="react" /></div>
-      <figcaption><strong>On-site inventory, coming.</strong> Pick a serial from the stock on location.</figcaption>
     </figure>
   </div>
 </Base>
