@@ -1,31 +1,24 @@
 ---
+import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-const tools = [
-  "Motor",
-  "NM Slick Monel",
-  "NM Flex Monel",
-  "NM Pony",
-  "NM Stabilizer Carrier",
-  "Stabilized Sub",
-  "Subs",
-  "Lifting Subs",
-  "Jars",
-  "Shock Sub",
-  "Exciter / Agitator / Sidewinder",
-  "Orbit",
-];
+import { HowPair } from "../components/tiles";
+
+const features = (await getCollection("features"))[0]?.data;
+if (!features) throw new Error("src/content/features.json is missing or failed its schema");
 ---
-<Base title="How StrapSheets works" description="The twelve standard tools and the path from measurement to PDF.">
+<Base title="How StrapSheets works" description="The path from a measurement to a PDF, and the tools on the sheet.">
   <h1>How it works</h1>
+  <HowPair client:only="react" />
   <ol>
     <li>Pick the job number and the tool.</li>
     <li>Enter the serial, the ends, the threads, and the measurements the sheet asks for.</li>
     <li>Confirm the card. The phone draws the PDF on the device.</li>
     <li>Send opens your mail app with the PDF attached. You press Send there.</li>
   </ol>
-  <h2>The twelve tools</h2>
-  <ul>
-    {tools.map((tool) => <li>{tool}</li>)}
+  <h2>The tools</h2>
+  <ul class="tools">
+    {features.tools.map((tool) => (
+      <li class={tool.kind === "custom" ? "pro" : undefined}>{tool.name}{tool.kind === "custom" ? " · Pro on the phone" : ""}</li>
+    ))}
   </ul>
-  <p>A thirteenth tool, Custom, lets you mark a tube yourself. That builder is part of Pro.</p>
 </Base>

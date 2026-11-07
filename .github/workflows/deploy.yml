@@ -5,6 +5,11 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# A release note and a page edit can push together. One upload at a time.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

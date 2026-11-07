@@ -1,0 +1,16 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+const releases = (await getCollection("releases")).sort((a, b) => b.data.date.localeCompare(a.data.date) || b.data.version.localeCompare(a.data.version));
+---
+<Base title="StrapSheets releases" description="What changed in each StrapSheets release.">
+  <h1>Releases</h1>
+  {releases.length === 0 ? <p>Release notes land here with each store build.</p> : releases.map((entry) => (
+    <article class="release">
+      <h2>{entry.data.version}</h2>
+      <p>{entry.data.date} · {entry.data.platforms.join(" and ")}</p>
+      <p>{entry.data.notes}</p>
+    </article>
+  ))}
+</Base>

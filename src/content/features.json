@@ -1,0 +1,23 @@
+{
+  "tools": [
+    { "name": "Motor", "kind": "standard" },
+    { "name": "NM Slick Monel", "kind": "standard" },
+    { "name": "NM Flex Monel", "kind": "standard" },
+    { "name": "NM Pony", "kind": "standard" },
+    { "name": "NM Stabilizer Carrier", "kind": "standard" },
+    { "name": "Stabilized Sub", "kind": "standard" },
+    { "name": "Subs", "kind": "standard" },
+    { "name": "Lifting Subs", "kind": "standard" },
+    { "name": "Jars", "kind": "standard" },
+    { "name": "Shock Sub", "kind": "standard" },
+    { "name": "Exciter / Agitator / Sidewinder", "kind": "standard" },
+    { "name": "Orbit", "kind": "standard" },
+    { "name": "MWD Carrier", "kind": "carrier" },
+    { "name": "Custom", "kind": "custom" }
+  ],
+  "headlines": [
+    { "title": "On the phone", "text": "Serial, ends, threads and the measures, in the order the sheet asks." },
+    { "title": "One card", "text": "The same picture the office prints, built on the phone and attached to your mail." },
+    { "title": "On the wall", "text": "One size, labelled by family, so a paper set sorts without retyping." }
+  ]
+}
