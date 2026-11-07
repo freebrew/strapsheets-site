@@ -129,7 +129,7 @@ export function HeroEntry() {
         play="loop"
         initial={START}
         poster={POSTER}
-        compact={{ below: 760, width: 358, height: 460 }}
+        compact={{ below: 520, width: 358, height: 460 }}
         cursor={{ at: "serial", style: "touch", kind: "pointer" }}
         script={script}
       >

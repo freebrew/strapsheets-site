@@ -123,11 +123,11 @@ const STOCK = ["MTR-4418", "MTR-4419", "SUB-2201", "JAR-1180"];
 export function InventoryTile() {
   return (
     <div id="inventory">
-      <Stage width={420} height={280} theme="dark" greys="cool" compact={{ below: 480, width: 320, height: 300 }}>
-        {() => (
+      <Stage width={420} height={280} theme="dark" greys="cool" compact={{ below: 480, width: 320, height: 200 }}>
+        {(_s, _r, layout) => (
           <div className="inventory-scene">
             <div className="job">Job 1044 · on location</div>
-            {STOCK.map((serial) => (
+            {(layout === "compact" ? STOCK.slice(0, 3) : STOCK).map((serial) => (
               <Row key={serial} title={serial} subtitle={serial.startsWith("MTR") ? "Motor" : serial.startsWith("SUB") ? "Sub" : "Jars"} pad={8} />
             ))}
             <Badge className="coming" tone="accent">Coming</Badge>

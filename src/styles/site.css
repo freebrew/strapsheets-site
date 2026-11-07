@@ -10,22 +10,40 @@ a { color: var(--ss-accent-text); }
 h1 { font-size: 2.4rem; font-weight: 560; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 0.4rem; }
 h2 { font-size: 1.35rem; font-weight: 560; letter-spacing: -0.02em; margin: 2.2rem 0 0.4rem; }
 p { margin: 0.4rem 0 0.8rem; color: var(--ss-text); }
-header.site, footer.site, main { width: min(1080px, calc(100% - 32px)); margin: 0 auto; }
+header.site, footer.site, main { width: min(1280px, calc(100% - 32px)); margin: 0 auto; }
 header.site { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 1.1rem 0; }
 .brand { color: var(--ss-text-strong); font-weight: 650; text-decoration: none; letter-spacing: -0.02em; }
-nav { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+nav { display: flex; flex-wrap: wrap; gap: 0.9rem; align-items: center; }
 nav a { color: var(--ss-text); text-decoration: none; font-size: 0.92rem; }
 nav a:hover { color: var(--ss-text-strong); }
+nav a.nav-cta {
+  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--ss-accent);
+  color: var(--ss-accent-text); font-weight: 600;
+}
+nav a.nav-cta:hover { background: var(--ss-accent-soft); color: var(--ss-text-strong); }
 .hero-copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 720px); gap: 28px; align-items: center; padding: 1.2rem 0 0.4rem; }
 .hero-copy h1 { font-size: clamp(2.2rem, 4vw, 3.4rem); }
 .lede { font-size: 1.15rem; color: var(--ss-text); max-width: 36rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 0.9rem 0 0; }
+.button {
+  display: inline-block; padding: 9px 16px; border-radius: 10px; text-decoration: none;
+  border: 1px solid var(--ss-line); color: var(--ss-text-strong); font-weight: 600; font-size: 0.95rem;
+}
+.button:hover { background: var(--ss-fill); }
+.button.primary { background: var(--ss-accent); border-color: var(--ss-accent); color: var(--ss-canvas); }
+.button.primary:hover { background: var(--ss-accent-2); border-color: var(--ss-accent-2); }
 .claims { display: grid; gap: 10px; margin-top: 1rem; }
 .claims div { padding-top: 8px; border-top: 1px solid var(--ss-line); }
 .claims strong { display: block; color: var(--ss-text-strong); }
 .claims span { color: var(--ss-text); font-size: 0.95rem; }
-.bento { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 14px; margin-top: 1.4rem; }
-.bento figure, .section figure { margin: 0; }
-.bento .span2 { grid-column: span 2; }
+.latest { margin: 0.9rem 0 0; font-size: 0.88rem; color: var(--ss-text-faint); }
+.latest strong { color: var(--ss-text); font-weight: 600; }
+.latest span { color: var(--ss-text-faint); }
+.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 1.2rem; }
+.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 1.4rem; }
+.bento figure, .section figure, .strip figure { margin: 0; }
+.cell { display: flex; align-items: center; justify-content: center; }
+.cell > astro-island { display: block; width: 100%; }
 .tile {
   background: var(--ss-surface);
   border: 1px solid var(--ss-line);
@@ -51,8 +69,41 @@ table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: 0.55rem 0.4rem; border-bottom: 1px solid var(--ss-line); vertical-align: top; }
 th { color: var(--ss-text-faint); font-weight: 600; }
 footer.site { margin: 3rem auto; color: var(--ss-text-faint); font-size: 0.85rem; }
+@media (max-width: 1099px) {
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 800px) {
-  .hero-copy, .bento { grid-template-columns: 1fr; }
-  .bento .span2 { grid-column: auto; }
+  .hero-copy, .bento, .strip { grid-template-columns: 1fr; }
   h1 { font-size: 2rem; }
+}
+
+/* Home on a desktop screen: one screen, no scrolling. The hero picture sizes itself from the
+   height left over, so a short laptop gets a smaller picture, never a scrollbar. */
+@media (min-width: 1100px) and (min-height: 720px) {
+  body[data-page="home"] { --head: 52px; --foot: 44px; --tile-h: 268px; }
+  body[data-page="home"] header.site { padding: 0; height: var(--head); }
+  body[data-page="home"] main { height: calc(100vh - var(--head) - var(--foot)); display: flex; flex-direction: column; justify-content: space-between; padding: 8px 0 10px; box-sizing: border-box; }
+  body[data-page="home"] .hero-copy {
+    --hero-w: max(520px, min(720px, 50vw, calc((100vh - var(--head) - var(--foot) - var(--tile-h) - 44px) * 1.714)));
+    grid-template-columns: minmax(0, 1fr) var(--hero-w);
+    padding: 0; flex: 1; min-height: 0;
+  }
+  body[data-page="home"] .hero-copy h1 { font-size: clamp(2rem, 3.2vw, 3rem); }
+  body[data-page="home"] .lede { font-size: 1.02rem; margin: 0.3rem 0 0; }
+  body[data-page="home"] .claims { gap: 6px; margin-top: 0.8rem; }
+  body[data-page="home"] .claims div { padding-top: 6px; }
+  body[data-page="home"] .claims span { font-size: 0.88rem; line-height: 1.35; }
+  body[data-page="home"] .strip { margin-top: 0; height: var(--tile-h); }
+  body[data-page="home"] .tile { padding: 10px 12px; display: flex; flex-direction: column; overflow: hidden; }
+  body[data-page="home"] .cell { flex: 1; min-height: 0; }
+  body[data-page="home"] .tile figcaption { margin-top: 8px; font-size: 0.86rem; line-height: 1.35; }
+  body[data-page="home"] footer.site {
+    height: var(--foot); margin: 0 auto; display: flex; gap: 24px; align-items: center;
+    font-size: 0.72rem; line-height: 1.3;
+  }
+  body[data-page="home"] footer.site p { margin: 0; flex: 1; }
+}
+@media (min-width: 1100px) and (min-height: 720px) and (max-height: 800px) {
+  body[data-page="home"] .claims span { display: none; }
+  body[data-page="home"] .claims strong { font-size: 0.92rem; }
 }

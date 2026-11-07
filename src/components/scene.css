@@ -44,7 +44,7 @@
 .stat-scene { display: grid; place-items: center; }
 .stat-scene strong { font-size: 64px; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .stat-scene strong span { font-size: 22px; margin-left: 8px; color: var(--ss-text); letter-spacing: 0; }
-.letter-card { display: flex; gap: 16px; align-items: center; height: 100%; padding: 8px 12px; }
+.letter-card { display: flex; gap: 16px; align-items: center; height: 100%; padding: 8px 22px 8px 12px; box-sizing: border-box; }
 .letter-card svg { flex: none; }
 .letter-card .metric { flex: 1; }
 .ticks { display: flex; flex-direction: column; gap: 8px; justify-content: center; height: 100%; padding: 0 8px; }

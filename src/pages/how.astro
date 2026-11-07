@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { HowPair } from "../components/tiles";
+import { CustomTile, HowPair, StatTile, StatementTile } from "../components/tiles";
 
 const features = (await getCollection("features"))[0]?.data;
 if (!features) throw new Error("src/content/features.json is missing or failed its schema");
@@ -21,4 +21,19 @@ if (!features) throw new Error("src/content/features.json is missing or failed i
       <li class={tool.kind === "custom" ? "pro" : undefined}>{tool.name}{tool.kind === "custom" ? " · Pro on the phone" : ""}</li>
     ))}
   </ul>
+  <h2>On the sheet</h2>
+  <div class="bento">
+    <figure class="tile">
+      <StatTile client:only="react" />
+      <figcaption><strong>The whole list.</strong> Twelve standard tools, the carrier, and Custom.</figcaption>
+    </figure>
+    <figure class="tile">
+      <StatementTile client:only="react" />
+      <figcaption><strong>Typed the way the yard talks.</strong> Serials stay in capitals.</figcaption>
+    </figure>
+    <figure class="tile">
+      <CustomTile client:only="react" />
+      <figcaption><strong>Custom is Pro</strong> on the phone. The web sheet keeps it open.</figcaption>
+    </figure>
+  </div>
 </Base>
