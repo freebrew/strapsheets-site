@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
+      # The server pins this key to rsync into the strapsheets public_html and nothing else
+      # (authorized_keys: restrict,command="rrsync -wo <public_html>"). No shell, no other folder.
+      DEPLOY_HOST: strapsheets.agent-swarm.net
+      DEPLOY_USER: agent-swarm
+      DEPLOY_HOST_KEY: "strapsheets.agent-swarm.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBtKX0bNlJLFmogS9PDS294meXOA94ywfJJrqtPTZ68t"
     steps:
       - uses: actions/checkout@v4
 
@@ -21,13 +26,14 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Upload public_html
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: strapsheets.agent-swarm.net
-          username: ${{ secrets.VIRTUALMIN_SSH_USER }}
-          key: ${{ secrets.VIRTUALMIN_SSH_KEY }}
-          source: "dist/*"
-          target: "public_html"
-          strip_components: 1
-          overwrite: true
+      - name: Upload to public_html
+        env:
+          DEPLOY_KEY: ${{ secrets.VIRTUALMIN_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+          rsync -rltz --chmod=D755,F644 --itemize-changes \
+            -e "ssh -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            dist/ "$DEPLOY_USER@$DEPLOY_HOST:./"
