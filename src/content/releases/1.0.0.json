@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "webRev": "2026-11-05.1",
+  "title": "Embossed Steel Vector Diagrams & Cross-Platform Baseline",
+  "date": "2026-11-05",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Initial release of the 12 standard tool drawings and MWD Carrier as one embossed steel vector set, paired with the mobile wizard, PDF card renderer, and Sheets parity checks.",
+  "ghUrl": "https://github.com/freebrew/StrapSheets/releases/tag/v1.0.0"
+}

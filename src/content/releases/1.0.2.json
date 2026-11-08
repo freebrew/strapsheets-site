@@ -1,0 +1,9 @@
+{
+  "version": "1.0.2",
+  "webRev": "2026-11-06.3",
+  "title": "One-Tap Auto-Advance & Keyboard-Docked Controls",
+  "date": "2026-11-06",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Button steps advance automatically after selection; Serial and Thread Type Other enforce capitals with spelling correction off; Back and Next dock above the keyboard.",
+  "ghUrl": "https://github.com/freebrew/StrapSheets/releases/tag/v1.0.2"
+}

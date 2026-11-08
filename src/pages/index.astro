@@ -9,7 +9,9 @@ import { WEB_APP_URL } from "../site";
 
 const features = (await getCollection("features"))[0]?.data;
 if (!features) throw new Error("src/content/features.json is missing or failed its schema");
-const latest = (await getCollection("releases")).sort((a, b) => b.data.date.localeCompare(a.data.date))[0];
+const latest = (await getCollection("releases")).sort(
+  (a, b) => b.data.version.localeCompare(a.data.version, undefined, { numeric: true }) || b.data.date.localeCompare(a.data.date),
+)[0];
 ---
 <Base title="StrapSheets" description="Strap sheets for drilling tools, filled in on the phone and emailed as a PDF." page="home">
   <section class="feature-grid-section" aria-label="Technical Feature Grid">
@@ -53,7 +55,7 @@ const latest = (await getCollection("releases")).sort((a, b) => b.data.date.loca
       <p class="lede">A directional driller measures the tool once. StrapSheets highlights the callout on the steel drawing, configures BOX and PIN ends in one step each, and hands a print-ready PDF to the mail app on the phone.</p>
       <p class="cta-row">
         <a class="button primary" href={WEB_APP_URL} target="_blank" rel="noopener">Open the Web Version</a>
-        <a class="button" href="/how">How It Works</a>
+        <a class="button" href="/releases">Releases{latest ? ` · v${latest.data.version}` : ""}</a>
       </p>
       <div class="claims">
         {features.headlines.map((item) => (
@@ -61,9 +63,15 @@ const latest = (await getCollection("releases")).sort((a, b) => b.data.date.loca
         ))}
       </div>
       <p class="latest">
-        <strong>What’s new</strong> ·
-        {latest ? <span>{latest.data.version} · {latest.data.date}</span> : <span>Release notes land here with each store build.</span>}
-        · <a href="/releases">All Releases</a>
+        <strong>Latest release</strong> ·
+        {latest ? (
+          <span>
+            <strong>v{latest.data.version}</strong>{latest.data.webRev ? ` (${latest.data.webRev})` : ""} · {latest.data.date} — {latest.data.title ?? latest.data.notes}
+          </span>
+        ) : (
+          <span>Release notes land here with each store build.</span>
+        )}
+        · <a href="/releases">Release Summary</a>
       </p>
     </div>
     <figure class="hero-figure">

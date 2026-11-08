@@ -1,0 +1,9 @@
+{
+  "version": "1.0.1",
+  "webRev": "2026-11-06.2",
+  "title": "Custom Tubular Builder, MWD Carrier & Proper Case Menus",
+  "date": "2026-11-06",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Shipped the Custom tubular builder (A–L stations, OD add-on labels, touch-size flags), MWD Carrier round entry and PDF cards, Proper Case menus, and NM Stabilizer Carrier.",
+  "ghUrl": "https://github.com/freebrew/StrapSheets/releases/tag/v1.0.1"
+}

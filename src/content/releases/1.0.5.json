@@ -1,0 +1,9 @@
+{
+  "version": "1.0.5",
+  "webRev": "2026-11-07.5",
+  "title": "Custom Ends from BOX PIN & Themed Screen Diagrams",
+  "date": "2026-11-07",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Custom ends and thread names (PIN / BOX) render directly from BOX PIN Config with half-density spiral hatch; screen diagrams render as theme-aware inline SVGs while print and PDF cards stay on light paper.",
+  "ghUrl": "https://github.com/freebrew/StrapSheets/releases/tag/v1.0.5"
+}

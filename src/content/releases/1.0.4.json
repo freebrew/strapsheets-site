@@ -1,0 +1,9 @@
+{
+  "version": "1.0.4",
+  "webRev": "2026-11-07.4",
+  "title": "Motor Drive Shaft OD, Bend Housing & Console Theme",
+  "date": "2026-11-07",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Added Motor Drive Shaft OD (J), required Bend Housing (FXD / ADJ) on the Serial screen, 6-digit email onboarding, and System / Light / Dark console themes.",
+  "ghUrl": "https://github.com/freebrew/StrapSheets/releases/tag/v1.0.4"
+}

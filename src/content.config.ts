@@ -18,9 +18,12 @@ const releases = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/content/releases" }),
   schema: z.object({
     version: z.string().regex(/^\d+\.\d+\.\d+$/),
+    webRev: z.string().optional(),
+    title: z.string().optional(),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    platforms: z.array(z.enum(["iOS", "Android"])).min(1),
+    platforms: z.array(z.enum(["iOS", "Android", "Web"])).min(1),
     notes: z.string().min(1),
+    ghUrl: z.string().url().optional(),
   }),
 });
 

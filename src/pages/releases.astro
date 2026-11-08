@@ -2,15 +2,44 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 
-const releases = (await getCollection("releases")).sort((a, b) => b.data.date.localeCompare(a.data.date) || b.data.version.localeCompare(a.data.version));
+const releases = (await getCollection("releases")).sort(
+  (a, b) => b.data.version.localeCompare(a.data.version, undefined, { numeric: true }) || b.data.date.localeCompare(a.data.date),
+);
 ---
-<Base title="StrapSheets releases" description="What changed in each StrapSheets release.">
-  <h1>Releases</h1>
-  {releases.length === 0 ? <p>Release notes land here with each store build.</p> : releases.map((entry) => (
-    <article class="release">
-      <h2>{entry.data.version}</h2>
-      <p>{entry.data.date} · {entry.data.platforms.join(" and ")}</p>
-      <p>{entry.data.notes}</p>
-    </article>
-  ))}
+<Base title="StrapSheets releases" description="Release summary for StrapSheets, newest version at the top.">
+  <section class="release-panel">
+    <div class="release-header">
+      <div>
+        <span class="fg-coord">GITHUB RELEASE RECORD · NEWEST FIRST</span>
+        <h1>Releases</h1>
+      </div>
+      <a class="button" href="https://github.com/freebrew/StrapSheets/releases" target="_blank" rel="noopener">GitHub Releases ↗</a>
+    </div>
+
+    <div class="release-list">
+      {releases.map((entry, idx) => (
+        <article class="release-row" data-latest={idx === 0 || undefined}>
+          <div class="release-ver-col">
+            <div class="release-ver-line">
+              <strong class="release-ver">v{entry.data.version}</strong>
+              {idx === 0 && <span class="release-latest-pill">Latest</span>}
+            </div>
+            {entry.data.webRev && <span class="release-rev">Web {entry.data.webRev}</span>}
+            <span class="release-date">{entry.data.date} · {entry.data.platforms.join(" · ")}</span>
+          </div>
+          <div class="release-body-col">
+            {entry.data.title && <strong class="release-title">{entry.data.title}</strong>}
+            <p class="release-summary">{entry.data.notes}</p>
+          </div>
+          <div class="release-link-col">
+            {entry.data.ghUrl && (
+              <a class="release-gh-link" href={entry.data.ghUrl} target="_blank" rel="noopener">
+                v{entry.data.version} on GitHub ↗
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
 </Base>

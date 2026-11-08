@@ -1,0 +1,9 @@
+{
+  "version": "1.0.3",
+  "webRev": "2026-11-06.5",
+  "title": "Standalone NM Pony & Submodule Parity",
+  "date": "2026-11-06",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Exposed NM Pony as its own front-page tool across Web, Android, and iOS; removed the NM Slick Monel type fold; enforced core submodule parity.",
+  "ghUrl": "https://github.com/freebrew/StrapSheets/releases/tag/v1.0.3"
+}
