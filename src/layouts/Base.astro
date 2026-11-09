@@ -6,10 +6,12 @@ import { WEB_APP_URL } from "../site";
 interface Props {
   title: string;
   description: string;
-  /** "home" turns on the one-screen desktop layout. */
-  page?: "home";
+  /** "home" turns on the one-screen desktop layout; "beta" turns on the compact Android beta flow. */
+  page?: "home" | "beta";
+  robots?: string;
+  canonical?: string;
 }
-const { title, description, page } = Astro.props;
+const { title, description, page, robots, canonical } = Astro.props;
 const links = [
   ["/", "Home"],
   ["/pricing", "Pricing"],
@@ -30,6 +32,8 @@ const here = Astro.url.pathname.replace(/\/$/, "") || "/";
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
+    {canonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" />
   </head>
   <body data-page={page}>
