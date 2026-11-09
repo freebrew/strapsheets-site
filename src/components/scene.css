@@ -303,6 +303,11 @@
   height: 20px;
   display: block;
 }
+/* The bit stands upright, pin up and cutting end down, so it gets a square box instead of the
+   wide strip the horizontal tools use. */
+.bha-well-col[data-upright] { height: 34px; }
+.bha-silhouette-wrap[data-upright] { width: 34px; height: 34px; }
+.bha-silhouette-wrap[data-upright] svg { height: 34px; }
 .bha-info-col {
   min-width: 0;
   display: flex;

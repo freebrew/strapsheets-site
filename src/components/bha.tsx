@@ -113,9 +113,13 @@ export function BhaPreview() {
                       data-max-od={(isShown && piece.key === "stab") || undefined}
                     >
                       <span className="bha-idx">{String(idx + 1).padStart(2, "0")}</span>
-                      <div className="bha-well-col">
-                        <div className="bha-silhouette-wrap" style={{ width: `${Math.max(58, odRatio)}%` }}>
-                          <svg viewBox={art.viewBox} aria-hidden="true" preserveAspectRatio="none">
+                      <div className="bha-well-col" data-upright={piece.upright || undefined}>
+                        <div
+                          className="bha-silhouette-wrap"
+                          data-upright={piece.upright || undefined}
+                          style={piece.upright ? undefined : { width: `${Math.max(58, odRatio)}%` }}
+                        >
+                          <svg viewBox={art.viewBox} aria-hidden="true" preserveAspectRatio={piece.upright ? "xMidYMid meet" : "none"}>
                             <g dangerouslySetInnerHTML={{ __html: art.markup }} />
                           </svg>
                         </div>

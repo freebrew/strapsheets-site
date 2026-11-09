@@ -1,7 +1,7 @@
 /** Inventory-workflow preview. Bit first, then up the string. Two NM Flex Monels. */
 
 export const BHA_BUILD = [
-  { key: "bit", name: "Bit", lengthM: 0.35, odIn: 6.125, idIn: 2.25, art: "Bit" },
+  { key: "bit", name: "Bit", lengthM: 0.35, odIn: 6.125, idIn: 2.25, art: "Bit", upright: true },
   { key: "motor", name: "Motor", lengthM: 9.42, odIn: 6.75, idIn: 2.81, art: "Motor" },
   { key: "stab", name: "Stabilized Sub", lengthM: 1.52, odIn: 8.5, idIn: 2.81, art: "StabSub" },
   { key: "pony", name: "NM Pony", lengthM: 1.2, odIn: 4.75, idIn: 2.81, art: "NMPony" },
