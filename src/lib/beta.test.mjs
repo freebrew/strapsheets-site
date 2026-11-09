@@ -23,37 +23,24 @@ function makeLink(intentName, href) {
   };
 }
 
-function makeTab(platform, selected) {
-  const attrs = { "data-beta-tab": platform, "aria-selected": selected ? "true" : "false" };
-  const handlers = {};
+function makeCard(platform) {
+  const attrs = { "data-beta-platform": platform };
+  const badge = { hidden: true };
   return {
+    attrs,
+    badge,
     getAttribute: (name) => attrs[name] ?? null,
     setAttribute: (name, value) => {
       attrs[name] = value;
     },
-    addEventListener: (event, fn) => {
-      handlers[event] = fn;
-    },
-    click: () => handlers.click?.(),
-    attrs,
+    querySelectorAll: (selector) => (selector === "[data-beta-yours]" ? [badge] : []),
   };
 }
-
-function makePanel(platform, hidden) {
-  const attrs = { "data-beta-panel": platform };
-  return {
-    hidden,
-    getAttribute: (name) => attrs[name] ?? null,
-  };
-}
-
 function run(userAgent) {
   const optIn = makeLink("play-optin", "https://play.google.com/apps/testing/com.strapsheets.app");
   const listing = makeLink("play-listing", "https://play.google.com/store/apps/details?id=com.strapsheets.app");
-  const androidTab = makeTab("android", true);
-  const iosTab = makeTab("ios", false);
-  const androidPanel = makePanel("android", false);
-  const iosPanel = makePanel("ios", true);
+  const androidCard = makeCard("android");
+  const iosCard = makeCard("ios");
   const notice = { hidden: true };
   const chrome = {
     hidden: true,
@@ -69,15 +56,14 @@ function run(userAgent) {
       getElementById: (id) => elements[id] || null,
       querySelectorAll: (selector) => {
         if (selector === "a[data-intent]") return [optIn, listing];
-        if (selector === "[data-beta-tab]") return [androidTab, iosTab];
-        if (selector === "[data-beta-panel]") return [androidPanel, iosPanel];
+        if (selector === "[data-beta-platform]") return [androidCard, iosCard];
         return [];
       },
     },
     window: { navigator: { userAgent } },
   };
   vm.runInNewContext(source, context, { filename: betaPath });
-  return { optIn, listing, notice, chrome, androidTab, iosTab, androidPanel, iosPanel };
+  return { optIn, listing, notice, chrome, androidCard, iosCard };
 }
 
 const chromeAndroid = "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/126.0 Mobile Safari/537.36";
@@ -92,7 +78,7 @@ test("beta.js avoids innerHTML, network calls, and storage", () => {
 });
 
 test("beta.js rewrites Play links to Play Store intents on Android Chrome", () => {
-  const { optIn, listing, notice, chrome, androidPanel, iosPanel } = run(chromeAndroid);
+  const { optIn, listing, notice, chrome } = run(chromeAndroid);
   assert.match(listing.attrs.href, /^intent:\/\/details\?id=com\.strapsheets\.app#Intent;scheme=market;package=com\.android\.vending;/);
   assert.ok(
     listing.attrs.href.includes(
@@ -103,22 +89,30 @@ test("beta.js rewrites Play links to Play Store intents on Android Chrome", () =
   assert.equal(listing.attrs.target, undefined);
   assert.equal(notice.hidden, true);
   assert.equal(chrome.hidden, true);
-  assert.equal(androidPanel.hidden, false);
-  assert.equal(iosPanel.hidden, true);
 });
 
-test("beta.js auto-selects the iPhone TestFlight panel on iOS and allows switching", () => {
-  const { androidTab, iosTab, androidPanel, iosPanel } = run(iphoneSafari);
-  assert.equal(iosTab.attrs["aria-selected"], "true");
-  assert.equal(androidTab.attrs["aria-selected"], "false");
-  assert.equal(iosPanel.hidden, false);
-  assert.equal(androidPanel.hidden, true);
+test("beta.js marks the phone's own card and never hides either sign-up", () => {
+  const ios = run(iphoneSafari);
+  assert.ok("data-yours" in ios.iosCard.attrs);
+  assert.equal(ios.iosCard.badge.hidden, false);
+  assert.ok(!("data-yours" in ios.androidCard.attrs));
+  assert.equal(ios.androidCard.badge.hidden, true);
 
-  androidTab.click();
-  assert.equal(androidTab.attrs["aria-selected"], "true");
-  assert.equal(iosTab.attrs["aria-selected"], "false");
-  assert.equal(androidPanel.hidden, false);
-  assert.equal(iosPanel.hidden, true);
+  const android = run(chromeAndroid);
+  assert.ok("data-yours" in android.androidCard.attrs);
+  assert.equal(android.androidCard.badge.hidden, false);
+  assert.ok(!("data-yours" in android.iosCard.attrs));
+
+  const desk = run(desktop);
+  assert.ok(!("data-yours" in desk.androidCard.attrs));
+  assert.ok(!("data-yours" in desk.iosCard.attrs));
+});
+
+test("the beta page has no platform switch and shows both sign-ups", () => {
+  const page = fs.readFileSync(path.join(root, "src/pages/beta.astro"), "utf8");
+  assert.doesNotMatch(page, /role="tab"|data-beta-tab|data-beta-panel/);
+  assert.match(page, /id="android"[\s\S]*id="iphone"/);
+  assert.doesNotMatch(page, /<(?:section|div)[^>]*\bhidden\b[^>]*data-beta-platform/);
 });
 
 test("beta.js reveals Open in Chrome notice inside Android in-app browsers", () => {

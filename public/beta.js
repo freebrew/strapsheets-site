@@ -47,28 +47,16 @@
     }
   }
 
-  const tabs = document.querySelectorAll("[data-beta-tab]");
-  const panels = document.querySelectorAll("[data-beta-panel]");
-
-  function selectPlatform(platform) {
-    for (const tab of tabs) {
-      const active = tab.getAttribute("data-beta-tab") === platform;
-      tab.setAttribute("aria-selected", active ? "true" : "false");
+  // Both sign-ups stay on screen. A phone only gets a "Your phone" badge on its own card,
+  // and that card moves to the top on narrow screens. Nothing is hidden or switched.
+  const yours = isIos ? "ios" : isAndroid ? "android" : "";
+  if (yours !== "") {
+    for (const card of document.querySelectorAll("[data-beta-platform]")) {
+      if (card.getAttribute("data-beta-platform") !== yours) continue;
+      card.setAttribute("data-yours", "");
+      for (const badge of card.querySelectorAll("[data-beta-yours]")) {
+        badge.hidden = false;
+      }
     }
-    for (const panel of panels) {
-      panel.hidden = panel.getAttribute("data-beta-panel") !== platform;
-    }
-  }
-
-  for (const tab of tabs) {
-    if (typeof tab.addEventListener === "function") {
-      tab.addEventListener("click", () => {
-        selectPlatform(tab.getAttribute("data-beta-tab"));
-      });
-    }
-  }
-
-  if (tabs.length > 0 && panels.length > 0) {
-    selectPlatform(isIos ? "ios" : "android");
   }
 })();

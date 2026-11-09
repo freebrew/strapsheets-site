@@ -27,12 +27,25 @@ const ROLE = {
   "#4a5964": "var(--dg-band, #4a5964)",
 };
 
+// PDC drill bit, side view, cutting face to the right. From the left: the threaded API pin,
+// the shank with its bit-breaker slot, the gauge section with gauge pads and junk slots,
+// then the shoulder, nose and cone of the crown carrying the diamond cutters.
+// The viewBox matches the 3.3:1 box the BHA column gives the Bit row, so nothing is stretched.
+const INK = 'var(--dg-ink, #243038)';
 const BIT = {
-  viewBox: "0 0 180 96",
+  viewBox: "0 0 132 40",
   markup:
-    '<path d="M8 28 H128 L168 48 L128 68 H8 Z" fill="var(--dg-fill, #e5ecf3)" stroke="var(--dg-ink, #243038)" stroke-width="2.5"/>' +
-    '<path d="M128 28 L168 48 L128 68" fill="var(--dg-bevel-shade-bot, #a5b6c9)" stroke="var(--dg-ink, #243038)" stroke-width="2.5"/>' +
-    '<path d="M150 40 L172 48 L150 56 Z" fill="var(--dg-ink, #243038)"/>',
+    `<path d="M2 13 H22 V8 H40 V3 H92 C108 3 120 10 128 18 L130 20 L128 22 C120 30 108 37 92 37 H40 V32 H22 V27 H2 Z" fill="var(--dg-fill, #e5ecf3)" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>` +
+    `<path d="M6 13 V27 M10 13 V27 M14 13 V27 M18 13 V27" stroke="${INK}" stroke-width="1.4" fill="none"/>` +
+    `<path d="M29 8 V32 M34 8 V32" stroke="${INK}" stroke-width="1.4" fill="none"/>` +
+    `<path d="M40 3 H86 V7 H40 Z M40 33 H86 V37 H40 Z" fill="var(--dg-band, #4a5964)" stroke="${INK}" stroke-width="1.4"/>` +
+    `<path d="M52 7 L60 33 M66 7 L74 33 M80 7 L88 33" stroke="${INK}" stroke-width="1.6" fill="none"/>` +
+    `<path d="M92 3 C108 3 120 10 128 18 L130 20 L128 22 C120 30 108 37 92 37 Z" fill="var(--dg-bevel-shade-bot, #a5b6c9)" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>` +
+    `<g fill="var(--dg-bevel-rim-top, #ffffff)" stroke="${INK}" stroke-width="1.3">` +
+    '<circle cx="97" cy="7" r="2.6"/><circle cx="105" cy="9" r="2.6"/><circle cx="113" cy="12.5" r="2.6"/><circle cx="120" cy="16.5" r="2.4"/>' +
+    '<circle cx="97" cy="33" r="2.6"/><circle cx="105" cy="31" r="2.6"/><circle cx="113" cy="27.5" r="2.6"/><circle cx="120" cy="23.5" r="2.4"/>' +
+    '<circle cx="106" cy="20" r="2.6"/><circle cx="115" cy="20" r="2.4"/>' +
+    "</g>",
 };
 
 function paint(color) {
