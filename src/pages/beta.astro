@@ -1,51 +1,87 @@
 ---
 import Base from "../layouts/Base.astro";
+
+const TESTFLIGHT_APP_URL = "https://apps.apple.com/app/testflight/id899247664";
+const TESTFLIGHT_JOIN_URL = "https://testflight.apple.com/join/xde2R9x1";
 ---
 <Base
   title="Join the Beta — StrapSheets"
-  description="Join the StrapSheets Android beta in three taps: join the tester group, opt in, and install from the Google Play app."
+  description="Install the StrapSheets beta on Android (Google Play) or iPhone (Apple TestFlight) in a few taps."
   page="beta"
   robots="noindex, follow"
   canonical="https://strapsheets.agent-swarm.net/beta/"
 >
   <section class="beta-wrap">
-    <h1>Join the Android Beta</h1>
-    <p class="beta-lead">Android 13+. Use the same Google account for every step.</p>
-
-    <div id="inapp-notice" class="callout" role="alert" hidden>
-      <p>
-        <strong>Opened inside another app?</strong> Tap <strong>⋮</strong> and choose <strong>Open in Chrome</strong>, or{" "}
-        <a id="open-chrome" href="https://strapsheets.agent-swarm.net/beta/" hidden>open this page in Chrome</a>. This browser cannot see your Google account, so Google Play shows “not found”.
-      </p>
+    <div class="beta-head">
+      <h1>Join the Beta</h1>
+      <div class="beta-tabs" role="tablist" aria-label="Platform">
+        <button type="button" role="tab" data-beta-tab="android" aria-selected="true">Android</button>
+        <button type="button" role="tab" data-beta-tab="ios" aria-selected="false">iPhone (iOS)</button>
+      </div>
     </div>
 
-    <ol class="beta-steps">
-      <li class="beta-step">
-        <div class="beta-step__body">
-          <h2 class="beta-step__title">Tester group</h2>
-          <p class="beta-step__text">Tap <strong>Join group</strong>.</p>
-        </div>
-        <a class="button primary button-link" href="https://groups.google.com/g/strapsheets-testers" target="_blank" rel="noopener noreferrer">Join</a>
-      </li>
-      <li class="beta-step">
-        <div class="beta-step__body">
-          <h2 class="beta-step__title">Opt in</h2>
-          <p class="beta-step__text">Tap <strong>Become a tester</strong>.</p>
-        </div>
-        <a class="button primary button-link" data-intent="play-optin" href="https://play.google.com/apps/testing/com.strapsheets.app" target="_blank" rel="noopener noreferrer">Opt in</a>
-      </li>
-      <li class="beta-step">
-        <div class="beta-step__body">
-          <h2 class="beta-step__title">Install</h2>
-          <p class="beta-step__text">Opens the Google Play app.</p>
-        </div>
-        <a class="button primary button-link" data-intent="play-listing" href="https://play.google.com/store/apps/details?id=com.strapsheets.app" target="_blank" rel="noopener noreferrer">Install</a>
-      </li>
-    </ol>
+    <div data-beta-panel="android">
+      <p class="beta-lead">Android 13+. Use the same Google account for every step.</p>
 
-    <p class="beta-note">Stay opted in for 14 days. Play says “not found”? Check the account and wait a few minutes; the app can take hours to appear.</p>
-    <noscript><p class="beta-note">JavaScript is off, so the buttons open the regular Google web pages in Chrome.</p></noscript>
-    <p class="beta-note">Independent app, not affiliated with Google. <a href="/privacy">Privacy Policy</a></p>
+      <div id="inapp-notice" class="callout" role="alert" hidden>
+        <p>
+          <strong>Opened inside another app?</strong> Tap <strong>⋮</strong> and choose <strong>Open in Chrome</strong>, or{" "}
+          <a id="open-chrome" href="https://strapsheets.agent-swarm.net/beta/" hidden>open this page in Chrome</a>. This browser cannot see your Google account, so Google Play shows “not found”.
+        </p>
+      </div>
+
+      <ol class="beta-steps">
+        <li class="beta-step">
+          <div class="beta-step__body">
+            <h2 class="beta-step__title">Tester group</h2>
+            <p class="beta-step__text">Tap <strong>Join group</strong>.</p>
+          </div>
+          <a class="button primary button-link" href="https://groups.google.com/g/strapsheets-testers" target="_blank" rel="noopener noreferrer">Join</a>
+        </li>
+        <li class="beta-step">
+          <div class="beta-step__body">
+            <h2 class="beta-step__title">Opt in</h2>
+            <p class="beta-step__text">Tap <strong>Become a tester</strong>.</p>
+          </div>
+          <a class="button primary button-link" data-intent="play-optin" href="https://play.google.com/apps/testing/com.strapsheets.app" target="_blank" rel="noopener noreferrer">Opt in</a>
+        </li>
+        <li class="beta-step">
+          <div class="beta-step__body">
+            <h2 class="beta-step__title">Install</h2>
+            <p class="beta-step__text">Opens the Google Play app.</p>
+          </div>
+          <a class="button primary button-link" data-intent="play-listing" href="https://play.google.com/store/apps/details?id=com.strapsheets.app" target="_blank" rel="noopener noreferrer">Install</a>
+        </li>
+      </ol>
+
+      <p class="beta-note">Stay opted in for 14 days. Play says “not found”? Check the account and wait a few minutes; the app can take hours to appear.</p>
+    </div>
+
+    <div data-beta-panel="ios" hidden>
+      <p class="beta-lead">iPhone with iOS 16+. Install Apple TestFlight first, then open the invite link.</p>
+
+      <ol class="beta-steps">
+        <li class="beta-step">
+          <div class="beta-step__body">
+            <h2 class="beta-step__title">Get TestFlight</h2>
+            <p class="beta-step__text">Install Apple’s free <strong>TestFlight</strong> app from the App Store.</p>
+          </div>
+          <a class="button primary button-link" href={TESTFLIGHT_APP_URL} target="_blank" rel="noopener noreferrer">App Store</a>
+        </li>
+        <li class="beta-step">
+          <div class="beta-step__body">
+            <h2 class="beta-step__title">Install StrapSheets</h2>
+            <p class="beta-step__text">Open the invite in TestFlight and tap <strong>Accept</strong> → <strong>Install</strong>.</p>
+          </div>
+          <a class="button primary button-link" href={TESTFLIGHT_JOIN_URL} target="_blank" rel="noopener noreferrer">Join on TestFlight</a>
+        </li>
+      </ol>
+
+      <p class="beta-note">If TestFlight says the beta isn’t accepting testers yet, Apple is finishing Beta App Review—internal testers invited by Apple ID can open the TestFlight app and install right away.</p>
+    </div>
+
+    <noscript><p class="beta-note">JavaScript is off, so the buttons open the regular store pages.</p></noscript>
+    <p class="beta-note">Independent app, not affiliated with Apple or Google. <a href="/privacy">Privacy Policy</a></p>
   </section>
   <script is:inline src="/beta.js" defer></script>
 </Base>

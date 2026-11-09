@@ -304,8 +304,44 @@ body[data-page="beta"] main {
 }
 
 .beta-wrap h1 {
-  margin: 0 0 0.25rem;
+  margin: 0;
   font-size: clamp(1.35rem, 5vw, 1.75rem);
+}
+
+.beta-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.beta-tabs {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid var(--ss-line);
+  background: var(--ss-surface);
+  gap: 3px;
+}
+
+.beta-tabs button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ss-text);
+  font-family: var(--ss-font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.beta-tabs button[aria-selected="true"] {
+  background: var(--ss-accent);
+  color: var(--ss-canvas);
 }
 
 .beta-lead {
