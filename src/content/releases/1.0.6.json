@@ -1,0 +1,8 @@
+{
+  "version": "1.0.6",
+  "webRev": "2026-11-09.6",
+  "title": "Custom Tools: Bit Box, Bent Housing, Seam Section",
+  "date": "2026-11-09",
+  "platforms": ["iOS", "Android", "Web"],
+  "notes": "Custom builder adds a Bit Box (body OD with its bit screwed in), an adjustable or fixed Bent Housing (Pad OD, Length To Center, ADJ or FXD, and a 0.00-3.00 degree bend setting with alignment lines), and a Seam Section. Flags re-letter by position as you slide them past each other, OD stations carry arrows on both sides, touch flags are two-thirds the size, and Total Length and ID sit at the bottom."
+}
