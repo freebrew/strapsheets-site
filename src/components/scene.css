@@ -290,7 +290,7 @@
   color: var(--ss-text-faint);
 }
 .bha-well-col {
-  height: 24px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -303,11 +303,13 @@
   height: 20px;
   display: block;
 }
-/* The bit stands upright, pin up and cutting end down, so it gets a square box instead of the
-   wide strip the horizontal tools use. */
-.bha-well-col[data-upright] { height: 34px; }
-.bha-silhouette-wrap[data-upright] { width: 34px; height: 34px; }
-.bha-silhouette-wrap[data-upright] svg { height: 34px; }
+/* The 8.5" bit cuts the full hole diameter and is the widest OD in the BHA stack. */
+.bha-silhouette-wrap[data-bit] {
+  height: 28px;
+}
+.bha-silhouette-wrap[data-bit] svg {
+  height: 28px;
+}
 .bha-info-col {
   min-width: 0;
   display: flex;

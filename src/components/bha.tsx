@@ -49,8 +49,8 @@ function fmtIn(value: number) {
 }
 
 const RECORD_BADGE: Record<string, { text: string; kind: "max" | "min" | "neck" }> = {
-  stab: { text: "MAX OD 8.5″", kind: "max" },
-  pony: { text: "MIN OD 4.75″", kind: "neck" },
+  bit: { text: "MAX OD 8.5″", kind: "max" },
+  pony: { text: "MIN OD 6.65″", kind: "neck" },
   mwd: { text: "MAX ID 3.00″", kind: "neck" },
   exciter: { text: "MIN ID 2.00″", kind: "min" },
 };
@@ -67,7 +67,7 @@ export function BhaPreview() {
         play="once"
         initial={OPEN}
         poster={POSTER}
-        compact={{ below: 480, width: 358, height: 690 }}
+        compact={{ below: 480, width: 358, height: 790 }}
         script={script}
       >
         {(s, _rect, layout) => {
@@ -103,23 +103,30 @@ export function BhaPreview() {
                   const isShown = idx < count;
                   const isCurrent = idx === count - 1;
                   const badge = RECORD_BADGE[piece.key];
-                  const odRatio = Math.round((piece.odIn / 8.5) * 100);
+                  const isBit = piece.key === "bit";
+                  const odRatio = isBit ? 100 : Math.round(70 + ((piece.odIn - 6.65) / 0.13) * 10);
+                  const rowHeightPx = isBit ? 26 : Math.round(14 + ((piece.odIn - 6.65) / 0.13) * 4);
                   return (
                     <div
                       className="bha-vrow"
                       key={piece.key}
                       data-shown={isShown || undefined}
                       data-current={isCurrent || undefined}
-                      data-max-od={(isShown && piece.key === "stab") || undefined}
+                      data-max-od={(isShown && isBit) || undefined}
                     >
                       <span className="bha-idx">{String(idx + 1).padStart(2, "0")}</span>
-                      <div className="bha-well-col" data-upright={piece.upright || undefined}>
+                      <div className="bha-well-col">
                         <div
                           className="bha-silhouette-wrap"
-                          data-upright={piece.upright || undefined}
-                          style={piece.upright ? undefined : { width: `${Math.max(58, odRatio)}%` }}
+                          data-bit={isBit || undefined}
+                          style={{ width: `${odRatio}%`, height: `${rowHeightPx}px` }}
                         >
-                          <svg viewBox={art.viewBox} aria-hidden="true" preserveAspectRatio={piece.upright ? "xMidYMid meet" : "none"}>
+                          <svg
+                            viewBox={art.bhaViewBox ?? art.viewBox}
+                            aria-hidden="true"
+                            preserveAspectRatio="none"
+                            style={{ height: `${rowHeightPx}px` }}
+                          >
                             <g dangerouslySetInnerHTML={{ __html: art.markup }} />
                           </svg>
                         </div>

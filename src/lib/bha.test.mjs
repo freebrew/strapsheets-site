@@ -42,16 +42,23 @@ test("additive length and min/max OD and ID metrics update after every addition"
     assert.equal(step.minIdIn, smallestId);
     assert.equal(step.maxIdIn, largestId);
   }
-  assert.equal(steps[0].largestOdIn, 6.125);
-  assert.equal(steps[1].largestOdIn, 6.75);
+  assert.equal(steps[0].largestOdIn, 8.5);
+  assert.equal(steps[1].largestOdIn, 8.5);
+  assert.equal(steps[1].minOdIn, 6.75);
   assert.equal(steps[2].largestOdIn, 8.5);
   assert.equal(steps.at(-1).largestOdIn, 8.5);
-  assert.equal(steps.at(-1).minOdIn, 4.75);
+  assert.equal(steps.at(-1).minOdIn, 6.65);
   assert.equal(steps.at(-1).minIdIn, 2.0);
   assert.equal(steps.at(-1).maxIdIn, 3.0);
-  assert.equal(steps.at(-1).maxOdKey, "stab");
+  assert.equal(steps.at(-1).maxOdKey, "bit");
   assert.equal(steps.at(-1).minOdKey, "pony");
   assert.equal(steps.at(-1).minIdKey, "exciter");
   assert.equal(steps.at(-1).maxIdKey, "mwd");
   assert.equal(steps.at(-1).totalLengthM, 41.03);
+  // Every tool behind the bit belongs to the same nominal 6.75" (171.5 mm) BHA size class,
+  // varying by only a couple to a few millimetres (6.65" to 6.78", i.e. 168.9 to 172.2 mm).
+  for (const piece of BHA_BUILD.slice(1)) {
+    assert.ok(piece.odIn < BHA_BUILD[0].odIn, `${piece.name} OD (${piece.odIn}") must be smaller than the bit`);
+    assert.ok(piece.odIn >= 6.62 && piece.odIn <= 6.8, `${piece.name} OD (${piece.odIn}") stays within a few mm of 6.75"`);
+  }
 });
