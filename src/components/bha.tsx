@@ -47,20 +47,32 @@ const RECORD_BADGE: Record<string, { text: string; kind: "max" | "min" | "neck" 
   exciter: { text: "MIN ID", kind: "min" },
 };
 
-function fmtTorque(kNm: number | null, ftLbs: number | null, unit: "kNm" | "ftLbs"): string {
+type Units = "metric" | "imperial";
+const MM_PER_IN = 25.4;
+const FT_PER_M = 3.28084;
+
+function fmtTorque(kNm: number | null, ftLbs: number | null, units: Units, withUnit = true): string {
   if (kNm == null || ftLbs == null) return "—";
-  if (unit === "ftLbs") return `${ftLbs.toLocaleString("en-US")} ft·lbs`;
-  return `${kNm.toFixed(1)} kN·m`;
+  if (units === "imperial") return `${ftLbs.toLocaleString("en-US")}${withUnit ? " ft·lbs" : ""}`;
+  return `${kNm.toFixed(0)}${withUnit ? " kN·m" : ""}`;
+}
+/** Diameters: whole mm, or inches to two places. */
+function fmtDia(mm: number, units: Units): string {
+  return units === "imperial" ? `${(mm / MM_PER_IN).toFixed(2)} in` : `${mm} mm`;
+}
+/** Lengths: metres to two places, or feet to one place. */
+function fmtLen(m: number, units: Units): string {
+  return units === "imperial" ? `${(m * FT_PER_M).toFixed(1)} ft` : `${m.toFixed(2)} m`;
 }
 
 export function BhaPreview() {
   const theme = useSiteTheme();
-  const [torqueUnit, setTorqueUnit] = useState<"kNm" | "ftLbs">("kNm");
+  const [units, setUnits] = useState<Units>("metric");
   const [webglReady, setWebglReady] = useState(false);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setTorqueUnit((prev) => (prev === "kNm" ? "ftLbs" : "kNm"));
+      setUnits((prev) => (prev === "metric" ? "imperial" : "metric"));
     }, 2600);
     return () => window.clearInterval(timer);
   }, []);
@@ -87,24 +99,24 @@ export function BhaPreview() {
               <div className="bha-head">
                 <div className="bha-title-row">
                   <span className="bha-kicker">SINGLE-COLUMN BHA · 3D AXIAL CCW ↑</span>
-                  <span className="bha-unit-pill" data-unit={torqueUnit}>
-                    <i data-active={torqueUnit === "kNm" || undefined}>kN·m</i>
+                  <span className="bha-unit-pill" data-unit={units === "metric" ? "kNm" : "ftLbs"}>
+                    <i data-active={units === "metric" || undefined}>mm · m · kN·m</i>
                     <span>⇄</span>
-                    <i data-active={torqueUnit === "ftLbs" || undefined}>ft·lbs</i>
+                    <i data-active={units === "imperial" || undefined}>in · ft · ft·lbs</i>
                   </span>
                 </div>
                 <div className="bha-metrics-grid">
                   <div className="bha-metric-box bha-metric-box--sum">
                     <span>∑ TOTAL LEN</span>
-                    <strong>{active.totalLengthM.toFixed(2)} m</strong>
+                    <strong>{fmtLen(active.totalLengthM, units)}</strong>
                   </div>
                   <div className="bha-metric-box">
                     <span>MAX / MIN OD</span>
-                    <strong>{active.maxOdMm} / {active.minOdMm} mm</strong>
+                    <strong>{units === "imperial" ? `${(active.maxOdMm / MM_PER_IN).toFixed(2)} / ${(active.minOdMm / MM_PER_IN).toFixed(2)} in` : `${active.maxOdMm} / ${active.minOdMm} mm`}</strong>
                   </div>
                   <div className="bha-metric-box">
                     <span>MIN / MAX ID</span>
-                    <strong>{active.minIdMm} / {active.maxIdMm} mm</strong>
+                    <strong>{units === "imperial" ? `${(active.minIdMm / MM_PER_IN).toFixed(2)} / ${(active.maxIdMm / MM_PER_IN).toFixed(2)} in` : `${active.minIdMm} / ${active.maxIdMm} mm`}</strong>
                   </div>
                 </div>
               </div>
@@ -163,45 +175,45 @@ export function BhaPreview() {
                           )}
                         </div>
                         <div className="bha-spec-line">
-                          <span>+{piece.lengthM.toFixed(2)}m</span>
-                          <span>OD {piece.odMm} mm</span>
-                          {!compact && <span>ID {piece.idMm} mm</span>}
+                          <span>+{fmtLen(piece.lengthM, units)}</span>
+                          <span>OD {fmtDia(piece.odMm, units)}</span>
+                          {!compact && <span>ID {fmtDia(piece.idMm, units)}</span>}
                         </div>
                       </div>
                       <div className="bha-thread-col" aria-label="Threads and make-up torque">
                         {isBit ? (
                           <>
                             <span className="bha-thread-name">PIN {piece.btmThread}</span>
-                            <span className="bha-torque-val" data-unit={torqueUnit}>
-                              {fmtTorque(piece.btmTorqueKnm, piece.btmTorqueFtLbs, torqueUnit)}
+                            <span className="bha-torque-val" data-unit={units === "metric" ? "kNm" : "ftLbs"}>
+                              {fmtTorque(piece.btmTorqueKnm, piece.btmTorqueFtLbs, units)}
                             </span>
                           </>
                         ) : piece.sameThread ? (
                           <>
                             <span className="bha-thread-name">{piece.topThread}</span>
-                            <span className="bha-torque-val" data-unit={torqueUnit}>
-                              {fmtTorque(piece.topTorqueKnm, piece.topTorqueFtLbs, torqueUnit)}
+                            <span className="bha-torque-val" data-unit={units === "metric" ? "kNm" : "ftLbs"}>
+                              {fmtTorque(piece.topTorqueKnm, piece.topTorqueFtLbs, units)}
                             </span>
                           </>
                         ) : (
                           <>
                             <span>
                               TOP {piece.topThread} ·{" "}
-                              <em className="bha-torque-inline" data-unit={torqueUnit}>
-                                {fmtTorque(piece.topTorqueKnm, piece.topTorqueFtLbs, torqueUnit)}
+                              <em className="bha-torque-inline" data-unit={units === "metric" ? "kNm" : "ftLbs"}>
+                                {fmtTorque(piece.topTorqueKnm, piece.topTorqueFtLbs, units, false)}
                               </em>
                             </span>
                             <span>
                               BTM {piece.btmThread} ·{" "}
-                              <em className="bha-torque-inline" data-unit={torqueUnit}>
-                                {fmtTorque(piece.btmTorqueKnm, piece.btmTorqueFtLbs, torqueUnit)}
+                              <em className="bha-torque-inline" data-unit={units === "metric" ? "kNm" : "ftLbs"}>
+                                {fmtTorque(piece.btmTorqueKnm, piece.btmTorqueFtLbs, units, false)}
                               </em>
                             </span>
                           </>
                         )}
                       </div>
                       <div className="bha-sum-col">
-                        <strong>{piece.totalLengthM.toFixed(2)} m</strong>
+                        <strong>{fmtLen(piece.totalLengthM, units)}</strong>
                       </div>
                     </div>
                   );
@@ -216,5 +228,8 @@ export function BhaPreview() {
 }
 
 export const BHA_NAMES = BHA_BUILD.map((piece) => piece.name);
+
+
+
 
 
