@@ -1,15 +1,66 @@
 /**
  * Inventory-workflow preview. Vertical BHA torqued together from Bit (01) through Jars (11).
- * All OD/ID in mm, lengths in m, and industry make-up torque specs in kN·m.
+ * All OD/ID in mm, lengths in m, and make-up torque specs in both kN·m and ft·lbs
+ * derived from API RP 7G / IADC and Command-SMFI drill-collar OD × Bore ID make-up torque tables.
  */
 
-export const THREAD_TORQUE_KNM = {
-  "4 1/2 REG": 24.4,
-  "4 1/2 XH": 30.5,
-  "4 1/2 IF": 38.6,
-};
+const KNM_PER_FTLB = 0.001355818;
 
-export const BHA_BUILD = [
+/**
+ * Verified API RP 7G / IADC & Command-SMFI recommended minimum make-up torque (ft·lbs and kN·m)
+ * as a function of thread connection, outside diameter (odMm), and bore inside diameter (idMm).
+ *
+ * Reference anchors (API RP 7G Table / Evolution Drilling & Command-SMFI Drill Collar Tables):
+ *   - 4 1/2 REG (OD 152–172 mm):
+ *       ID 51 mm (2"):       23,686 ft·lbs (32.1 kN·m)
+ *       ID 57 mm (2 1/4"):   21,749 ft·lbs (29.5 kN·m)
+ *       ID 63.5 mm (2 1/2"): 19,601 ft·lbs (26.6 kN·m)
+ *       ID 71 mm (2 13/16"): 16,629 ft·lbs (22.5 kN·m)
+ *   - 4 1/2 XH / API NC46 (OD 159–172 mm, pin-tension governed):
+ *       ID 57 mm (2 1/4"):   28,021 ft·lbs (38.0 kN·m)
+ *       ID 63.5 mm (2 1/2"): 25,676 ft·lbs (34.8 kN·m)
+ *       ID 71 mm (2 13/16"): 22,426 ft·lbs (30.4 kN·m)
+ *       ID 76 mm (3"):       20,311 ft·lbs (27.5 kN·m)
+ *   - 4 1/2 IF / API NC50 (OD 165.1–171.5 mm, combined box-bucking & pin-tension curve):
+ *       OD 169 mm (6.65"), ID 51 mm (2"):     33,900 ft·lbs (46.0 kN·m)
+ *       OD 170 mm (6.69"), ID 57 mm (2 1/4"): 35,100 ft·lbs (47.6 kN·m)
+ *       OD 171 mm (6.73"), ID 57 mm (2 1/4"): 35,824 ft·lbs (48.6 kN·m)
+ */
+export function apiMakeUpTorque(thread, odMm, idMm) {
+  if (!thread || thread === "—") return null;
+
+  let ftLbs = 0;
+  if (thread === "4 1/2 REG") {
+    if (idMm <= 51) ftLbs = 23690;
+    else if (idMm <= 57) ftLbs = 21750;
+    else if (idMm <= 64) ftLbs = 19600;
+    else ftLbs = 16630;
+  } else if (thread === "4 1/2 XH") {
+    // API NC46: pin wall thickness (controlled by ID) governs above 159 mm (6 1/4") OD,
+    // with slight collar OD seating adjustment across 169–172 mm.
+    if (idMm <= 57) ftLbs = 28020;
+    else if (idMm <= 64) ftLbs = 25680;
+    else if (idMm <= 71) {
+      ftLbs = odMm >= 172 ? 22550 : odMm === 171 ? 22430 : odMm === 170 ? 22310 : 22190;
+    } else {
+      ftLbs = 20310;
+    }
+  } else if (thread === "4 1/2 IF") {
+    // API NC50: between 6 1/2" (165.1 mm, 29,679 ft·lbs) and 6 3/4" (171.5 mm, 36,742 / 35,824 ft·lbs)
+    // box wall thickness and bore ID both govern.
+    if (odMm <= 169 && idMm <= 51) ftLbs = 33900;
+    else if (odMm === 170 && idMm <= 57) ftLbs = 35100;
+    else if (odMm >= 171 && idMm <= 57) ftLbs = 35820;
+    else ftLbs = 32280;
+  } else {
+    return null;
+  }
+
+  const kNm = Math.round(ftLbs * KNM_PER_FTLB * 10) / 10;
+  return { ftLbs, kNm };
+}
+
+const RAW_BHA = [
   {
     key: "bit",
     name: "Bit",
@@ -17,9 +68,7 @@ export const BHA_BUILD = [
     odMm: 216,
     idMm: 57,
     topThread: "—",
-    topTorqueKnm: null,
     btmThread: "4 1/2 REG",
-    btmTorqueKnm: 24.4,
     art: "Bit",
   },
   {
@@ -29,9 +78,7 @@ export const BHA_BUILD = [
     odMm: 171,
     idMm: 71,
     topThread: "4 1/2 REG",
-    topTorqueKnm: 24.4,
     btmThread: "4 1/2 XH",
-    btmTorqueKnm: 30.5,
     art: "Motor",
   },
   {
@@ -41,9 +88,7 @@ export const BHA_BUILD = [
     odMm: 172,
     idMm: 71,
     topThread: "4 1/2 XH",
-    topTorqueKnm: 30.5,
     btmThread: "4 1/2 XH",
-    btmTorqueKnm: 30.5,
     art: "StabSub",
   },
   {
@@ -53,9 +98,7 @@ export const BHA_BUILD = [
     odMm: 169,
     idMm: 71,
     topThread: "4 1/2 XH",
-    topTorqueKnm: 30.5,
     btmThread: "4 1/2 XH",
-    btmTorqueKnm: 30.5,
     art: "NMPony",
   },
   {
@@ -65,9 +108,7 @@ export const BHA_BUILD = [
     odMm: 171,
     idMm: 76,
     topThread: "4 1/2 XH",
-    topTorqueKnm: 30.5,
     btmThread: "4 1/2 XH",
-    btmTorqueKnm: 30.5,
     art: "MWDCarrier",
   },
   {
@@ -77,9 +118,7 @@ export const BHA_BUILD = [
     odMm: 170,
     idMm: 71,
     topThread: "4 1/2 XH",
-    topTorqueKnm: 30.5,
     btmThread: "4 1/2 XH",
-    btmTorqueKnm: 30.5,
     art: "NMFlex",
   },
   {
@@ -89,9 +128,7 @@ export const BHA_BUILD = [
     odMm: 169,
     idMm: 71,
     topThread: "4 1/2 XH",
-    topTorqueKnm: 30.5,
     btmThread: "4 1/2 XH",
-    btmTorqueKnm: 30.5,
     art: "NMFlex",
   },
   {
@@ -101,9 +138,7 @@ export const BHA_BUILD = [
     odMm: 170,
     idMm: 57,
     topThread: "4 1/2 XH",
-    topTorqueKnm: 30.5,
     btmThread: "4 1/2 IF",
-    btmTorqueKnm: 38.6,
     art: "Subs",
   },
   {
@@ -113,9 +148,7 @@ export const BHA_BUILD = [
     odMm: 169,
     idMm: 51,
     topThread: "4 1/2 IF",
-    topTorqueKnm: 38.6,
     btmThread: "4 1/2 IF",
-    btmTorqueKnm: 38.6,
     art: "Exciter",
   },
   {
@@ -125,9 +158,7 @@ export const BHA_BUILD = [
     odMm: 171,
     idMm: 57,
     topThread: "4 1/2 IF",
-    topTorqueKnm: 38.6,
     btmThread: "4 1/2 IF",
-    btmTorqueKnm: 38.6,
     art: "ShockSub",
   },
   {
@@ -138,12 +169,26 @@ export const BHA_BUILD = [
     odMm: 170,
     idMm: 57,
     topThread: "4 1/2 IF",
-    topTorqueKnm: 38.6,
     btmThread: "4 1/2 IF",
-    btmTorqueKnm: 38.6,
     art: "Jars",
   },
 ];
+
+export const BHA_BUILD = RAW_BHA.map((piece) => {
+  // For Motor TOP (4 1/2 REG bit box), the bit-box bore matches the 57 mm bit pin.
+  const topIdMm = piece.key === "motor" && piece.topThread === "4 1/2 REG" ? 57 : piece.idMm;
+  const topSpec = apiMakeUpTorque(piece.topThread, piece.odMm, topIdMm);
+  const btmSpec = apiMakeUpTorque(piece.btmThread, piece.odMm, piece.idMm);
+  const sameThread = piece.topThread === piece.btmThread;
+  return {
+    ...piece,
+    sameThread,
+    topTorqueKnm: topSpec ? topSpec.kNm : null,
+    topTorqueFtLbs: topSpec ? topSpec.ftLbs : null,
+    btmTorqueKnm: btmSpec ? btmSpec.kNm : null,
+    btmTorqueFtLbs: btmSpec ? btmSpec.ftLbs : null,
+  };
+});
 
 function round3(n) {
   return Math.round(n * 1000) / 1000;

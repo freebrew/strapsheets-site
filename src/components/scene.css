@@ -229,6 +229,26 @@
   font-variant-numeric: tabular-nums;
   color: var(--ss-text-faint);
 }
+.bha-unit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--ss-line);
+  background: var(--ss-chrome);
+  font-family: var(--ss-mono);
+  font-size: 10.5px;
+  color: var(--ss-text-faint);
+}
+.bha-unit-pill i {
+  font-style: normal;
+  transition: color 220ms ease;
+}
+.bha-unit-pill i[data-active] {
+  color: var(--ss-accent-text);
+  font-weight: 700;
+}
 .bha-metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -265,12 +285,33 @@
 }
 
 .bha-vstack {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 0;
   overflow: hidden;
+}
+.bha-webgl-canvas {
+  position: absolute;
+  left: 23px;
+  top: 0;
+  width: 62px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.bha-webgl-canvas[data-ready] {
+  opacity: 1;
+}
+.bha-column-scene[data-layout="compact"] .bha-webgl-canvas {
+  left: 20px;
+  width: 46px;
+}
+.bha-vstack[data-webgl] .bha-silhouette-wrap {
+  opacity: 0;
 }
 .bha-vrow {
   display: grid;
@@ -379,8 +420,31 @@
 .bha-thread-col span:first-child {
   color: var(--ss-text);
 }
-.bha-vrow[data-xover] .bha-thread-col span {
+.bha-thread-name {
+  color: var(--ss-text-strong);
+  font-weight: 600;
+}
+.bha-torque-val {
   color: var(--ss-accent-text);
+  font-weight: 600;
+  transition: color 220ms ease;
+}
+.bha-torque-val[data-unit="ftLbs"],
+.bha-torque-inline[data-unit="ftLbs"] {
+  color: #f6e7a8;
+}
+:root[data-theme="light"] .bha-torque-val[data-unit="ftLbs"],
+:root[data-theme="light"] .bha-torque-inline[data-unit="ftLbs"] {
+  color: var(--ss-accent-text);
+}
+.bha-torque-inline {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--ss-accent-text);
+  transition: color 220ms ease;
+}
+.bha-vrow[data-xover] .bha-thread-col span {
+  color: var(--ss-text-strong);
   font-weight: 600;
 }
 .bha-tag {
