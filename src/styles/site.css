@@ -313,7 +313,17 @@ body[data-page="home"] main::after {
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: 0.55rem 0.4rem; border-bottom: 1px solid var(--ss-line); vertical-align: top; }
 th { color: var(--ss-text-faint); font-weight: 600; }
-footer.site { margin: 3rem auto; color: var(--ss-text-faint); font-size: 0.85rem; }
+/* The footer repeats the top menu, as a panel like the header but not sticky. */
+footer.site {
+  margin: 2.5rem auto 1rem;
+  padding: 0.75rem 1.15rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--ss-line);
+  background: color-mix(in srgb, var(--ss-surface) 92%, transparent);
+}
 
 @media (max-width: 1120px) {
   .landing { grid-template-columns: 1fr; grid-template-areas: "quad" "side"; }
