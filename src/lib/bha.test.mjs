@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BHA_BUILD, bhaProgress } from "./bha.mjs";
+import { BHA_BUILD, THREAD_TORQUE_KNM, bhaProgress } from "./bha.mjs";
 
 const ORDER = [
   "Bit",
@@ -16,14 +16,43 @@ const ORDER = [
   "Jars",
 ];
 
-test("BHA order is the bit, then up the string, with two NM Flex Monels and Subs - X-Over", () => {
+test("BHA order, torqued thread continuity across X-Over, and industry torque specs", () => {
   assert.deepEqual(BHA_BUILD.map((piece) => piece.name), ORDER);
   assert.equal(BHA_BUILD.filter((piece) => piece.name === "NM Flex Monel").length, 2);
   assert.notEqual(BHA_BUILD[5].key, BHA_BUILD[6].key);
-  for (const piece of BHA_BUILD) {
-    assert.ok(typeof piece.topThread === "string" && piece.topThread.length > 0);
-    assert.ok(typeof piece.btmThread === "string" && piece.btmThread.length > 0);
+
+  // Every adjacent tool joint in the vertical BHA must have matching thread and make-up torque.
+  for (let i = 0; i < BHA_BUILD.length - 1; i++) {
+    const upper = BHA_BUILD[i];
+    const lower = BHA_BUILD[i + 1];
+    assert.equal(
+      upper.btmThread,
+      lower.topThread,
+      `joint ${upper.name} BTM (${upper.btmThread}) must match ${lower.name} TOP (${lower.topThread})`,
+    );
+    assert.equal(
+      upper.btmTorqueKnm,
+      lower.topTorqueKnm,
+      `joint ${upper.name} BTM torque (${upper.btmTorqueKnm}) must match ${lower.name} TOP torque (${lower.topTorqueKnm})`,
+    );
+    assert.equal(upper.btmTorqueKnm, THREAD_TORQUE_KNM[upper.btmThread]);
   }
+
+  // Subs - X-Over crosses from 4 1/2 XH (30.5 kN·m) to 4 1/2 IF (38.6 kN·m),
+  // and items 9, 10, 11 stay on 4 1/2 IF (38.6 kN·m).
+  const xo = BHA_BUILD[7];
+  assert.equal(xo.name, "Subs - X-Over");
+  assert.equal(xo.topThread, "4 1/2 XH");
+  assert.equal(xo.btmThread, "4 1/2 IF");
+  assert.equal(xo.topTorqueKnm, 30.5);
+  assert.equal(xo.btmTorqueKnm, 38.6);
+  for (const idx of [8, 9, 10]) {
+    assert.equal(BHA_BUILD[idx].topThread, "4 1/2 IF");
+    assert.equal(BHA_BUILD[idx].btmThread, "4 1/2 IF");
+    assert.equal(BHA_BUILD[idx].topTorqueKnm, 38.6);
+    assert.equal(BHA_BUILD[idx].btmTorqueKnm, 38.6);
+  }
+
   const jars = BHA_BUILD.find((piece) => piece.key === "jars");
   assert.equal(jars?.jarSpecs, "UP 48K DN 22K SEC 39");
   for (const key of ["exciter", "shock", "jars"]) {
@@ -65,8 +94,6 @@ test("additive length and min/max OD and ID metrics (in mm) update after every a
   assert.equal(steps.at(-1).minIdKey, "exciter");
   assert.equal(steps.at(-1).maxIdKey, "mwd");
   assert.equal(steps.at(-1).totalLengthM, 51.83);
-  // Every tool behind the bit belongs to the same nominal 171 mm BHA size class,
-  // varying by only a couple to a few millimetres (169 to 172 mm).
   for (const piece of BHA_BUILD.slice(1)) {
     assert.ok(piece.odMm < BHA_BUILD[0].odMm, `${piece.name} OD (${piece.odMm} mm) must be smaller than the bit`);
     assert.ok(piece.odMm >= 168 && piece.odMm <= 173, `${piece.name} OD (${piece.odMm} mm) stays within a few mm of 171 mm`);

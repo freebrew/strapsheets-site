@@ -7,13 +7,10 @@ import { Faux, useSiteTheme } from "../lib/theme";
 import "./scene.css";
 
 /**
- * Single-Column Long BHA Depiction — Inventory Workflow Preview.
- * Tools stack in a single vertical column from Bit (01) through Jars (11).
- * Every addition updates the additive Total Length and dynamically detects
- * the minimum and maximum common metrics across the string in metric units:
- *   - Additive Total Length (m)
- *   - Maximum OD (mm) & Minimum OD (mm)
- *   - Minimum Bore ID (mm) & Maximum Bore ID (mm)
+ * Single-Column Vertical BHA Depiction — Inventory Workflow Preview.
+ * Tools are oriented vertically, scaled to their posted length, and torqued together
+ * shoulder-to-shoulder from Bit (01) through Jars (11) with industry make-up torque
+ * specs (kN·m) and animated fly-in assembly.
  */
 
 type Build = { shown: number };
@@ -22,34 +19,29 @@ const OPEN: Build = { shown: 1 };
 const POSTER: Build = { shown: STEPS.length };
 
 const script = async (a: Act<Build>) => {
-  await a.wait(320);
+  await a.wait(260);
   a.mark("open");
-  const groups = [
-    [2, 3],
-    [4, 5],
-    [6, 7],
-    [8, 9],
-    [10, 11],
-  ];
-  for (const group of groups) {
-    a.mark(`add-${group[0]}`);
-    for (const shown of group) {
-      await a.set({ shown });
-      await a.wait(320);
-    }
-    await a.wait(220);
+  for (let shown = 2; shown <= STEPS.length; shown++) {
+    a.mark(`add-${shown}`);
+    await a.set({ shown });
+    await a.wait(260);
   }
   a.mark("payoff");
-  await a.wait(2000);
   markBhaComplete();
+  await a.wait(1200);
 };
 
 const RECORD_BADGE: Record<string, { text: string; kind: "max" | "min" | "neck" }> = {
-  bit: { text: "MAX OD 216 mm", kind: "max" },
-  pony: { text: "MIN OD 169 mm", kind: "neck" },
-  mwd: { text: "MAX ID 76 mm", kind: "neck" },
-  exciter: { text: "MIN ID 51 mm", kind: "min" },
+  bit: { text: "MAX OD", kind: "max" },
+  pony: { text: "MIN OD", kind: "neck" },
+  mwd: { text: "MAX ID", kind: "neck" },
+  exciter: { text: "MIN ID", kind: "min" },
 };
+
+function fmtEnd(prefix: "TOP" | "BTM", thread: string, torqueKnm: number | null) {
+  if (!torqueKnm || thread === "—") return `${prefix} ${thread}`;
+  return `${prefix} ${thread} · ${torqueKnm.toFixed(1)} kN·m`;
+}
 
 export function BhaPreview() {
   const theme = useSiteTheme();
@@ -100,15 +92,18 @@ export function BhaPreview() {
                   const isCurrent = idx === count - 1;
                   const badge = RECORD_BADGE[piece.key];
                   const isBit = piece.key === "bit";
-                  const odRatio = isBit ? 100 : Math.round(70 + ((piece.odMm - 169) / 3) * 10);
-                  const rowHeightPx = isBit ? 26 : Math.round(14 + ((piece.odMm - 169) / 3) * 4);
+                  const isCrossover = piece.topThread !== piece.btmThread && piece.topThread !== "—";
+                  const odRatio = isBit ? 96 : Math.round(92 + ((piece.odMm - 169) / 3) * 6);
+                  const rowHeightPx = Math.round(40 + piece.lengthM * 3.8);
                   return (
                     <div
                       className="bha-vrow"
                       key={piece.key}
+                      style={{ height: `${rowHeightPx}px` }}
                       data-shown={isShown || undefined}
                       data-current={isCurrent || undefined}
                       data-max-od={(isShown && isBit) || undefined}
+                      data-xover={isCrossover || undefined}
                     >
                       <span className="bha-idx">{String(idx + 1).padStart(2, "0")}</span>
                       <div className="bha-well-col">
@@ -118,12 +113,12 @@ export function BhaPreview() {
                           style={{ width: `${odRatio}%`, height: `${rowHeightPx}px` }}
                         >
                           <svg
-                            viewBox={art.bhaViewBox ?? art.viewBox}
+                            viewBox={art.vertViewBox ?? art.bhaViewBox ?? art.viewBox}
                             aria-hidden="true"
                             preserveAspectRatio="none"
                             style={{ height: `${rowHeightPx}px` }}
                           >
-                            <g dangerouslySetInnerHTML={{ __html: art.markup }} />
+                            <g dangerouslySetInnerHTML={{ __html: art.vertMarkup ?? art.markup }} />
                           </svg>
                         </div>
                       </div>
@@ -143,9 +138,9 @@ export function BhaPreview() {
                           {!compact && <span>ID {piece.idMm} mm</span>}
                         </div>
                       </div>
-                      <div className="bha-thread-col" aria-label="Threads">
-                        <span>TOP {piece.topThread}</span>
-                        <span>BTM {piece.btmThread}</span>
+                      <div className="bha-thread-col" aria-label="Threads and make-up torque">
+                        <span>{fmtEnd("TOP", piece.topThread, piece.topTorqueKnm)}</span>
+                        <span>{fmtEnd("BTM", piece.btmThread, piece.btmTorqueKnm)}</span>
                       </div>
                       <div className="bha-sum-col">
                         <strong>{piece.totalLengthM.toFixed(2)} m</strong>
