@@ -30,7 +30,7 @@ const START: Scene = {
   mode: "boxpin",
   ring: "A",
   lenVal: "9.42",
-  odVal: "6.75",
+  odVal: "171",
   rows: 2,
   card: false,
 };
@@ -39,7 +39,7 @@ const POSTER: Scene = {
   mode: "confirm",
   ring: "B",
   lenVal: "9.42",
-  odVal: "6.75",
+  odVal: "171",
   rows: 4,
   card: true,
 };
@@ -80,7 +80,7 @@ const CONFIRM_ROWS = [
   ["Serial · Material", "MTR-4418 · Steel"],
   ["BOX · Upper", "4 1/2 IF [NC 50]"],
   ["PIN · Lower", "DS 38 [NC38]"],
-  ["A LEN · B OD", "9.42 m · 6.75 in"],
+  ["A LEN · B OD", "9.42 m · 171 mm"],
 ];
 
 function MorphDiagram({ s }: { s: Scene }) {
@@ -146,8 +146,8 @@ function Paper({ on }: { on: boolean }) {
       </div>
       <div className="metric">
         <div><span>A LEN</span><span>9.42 m</span></div>
-        <div><span>B OD</span><span>6.75 in</span></div>
-        <div><span>D ID</span><span>2.81 in</span></div>
+        <div><span>B OD</span><span>171 mm</span></div>
+        <div><span>D ID</span><span>71 mm</span></div>
       </div>
     </aside>
   );
@@ -193,11 +193,11 @@ function Screen({ s }: { s: Scene }) {
             </div>
             <div className="measure-pill" data-target="field-od" data-active={s.ring === "B" || undefined}>
               <span>B · Upper OD</span>
-              <strong>{s.odVal} in</strong>
+              <strong>{s.odVal} mm</strong>
             </div>
             <div className="measure-pill" data-active={s.ring === "D" || undefined}>
               <span>Spiral OD</span>
-              <strong>8.25 in</strong>
+              <strong>210 mm</strong>
             </div>
           </div>
         </div>

@@ -20,7 +20,7 @@ const PANEL_START: PanelScene = {
   mode: "boxpin",
   ring: "A",
   lenVal: "9.42",
-  odVal: "6.75",
+  odVal: "171",
   rows: 2,
   card: false,
   phase: 1,
@@ -30,7 +30,7 @@ const PANEL_POSTER: PanelScene = {
   mode: "confirm",
   ring: "B",
   lenVal: "9.42",
-  odVal: "6.75",
+  odVal: "171",
   rows: 4,
   card: true,
   phase: 3,
@@ -72,7 +72,7 @@ const PANEL_CONFIRM_ROWS = [
   ["Serial · Material", "MTR-4418 · Steel"],
   ["BOX · Upper", "4 1/2 IF [NC 50]"],
   ["PIN · Lower", "DS 38 [NC38]"],
-  ["A LEN · B OD", "9.42 m · 6.75 in"],
+  ["A LEN · B OD", "9.42 m · 171 mm"],
 ];
 
 export function CustomMorphTile() {
@@ -166,11 +166,11 @@ export function CustomMorphTile() {
                     </div>
                     <div className="measure-pill" data-target="panel-field-od" data-active={s.ring === "B" || undefined}>
                       <span>B · Upper OD</span>
-                      <strong>{s.odVal} in</strong>
+                      <strong>{s.odVal} mm</strong>
                     </div>
                     <div className="measure-pill" data-active={s.ring === "D" || undefined}>
                       <span>Spiral OD</span>
-                      <strong>8.25 in</strong>
+                      <strong>210 mm</strong>
                     </div>
                   </div>
 
@@ -229,8 +229,8 @@ export function CustomMorphTile() {
                       </div>
 
                       <div className="cm-chips-row">
-                        <span className="cm-chip" data-lit>A Upset OD · 6.75″</span>
-                        <span className="cm-chip" data-lit={s.phase >= 2 || undefined}>B Spiral OD · 8.25″</span>
+                        <span className="cm-chip" data-lit>A Upset OD · 171 mm</span>
+                        <span className="cm-chip" data-lit={s.phase >= 2 || undefined}>B Spiral OD · 210 mm</span>
                         <span className="cm-chip" data-lit={s.phase >= 3 || undefined}>C Length · 3.10 m</span>
                       </div>
                     </div>
@@ -246,7 +246,7 @@ export function CustomMorphTile() {
 
                     <div className="cm-yellow-payoff" data-lit={s.card || undefined}>
                       <strong>MOTOR · MTR-4418 · PRINTED CARD</strong>
-                      <span>A LEN 9.42 m · B OD 6.75 in · D ID 2.81 in</span>
+                      <span>A LEN 9.42 m · B OD 171 mm · D ID 71 mm</span>
                     </div>
                   </div>
                 )}
@@ -292,12 +292,12 @@ export function ThemeMorphTile() {
               <svg viewBox={subs.viewBox} aria-hidden="true">
                 <g dangerouslySetInnerHTML={{ __html: subs.markup }} />
               </svg>
-              <div className="tm-meta">Screen (--dg-surface) · Highlighted: B (6.50″)</div>
+              <div className="tm-meta">Screen (--dg-surface) · Highlighted: B (170 mm)</div>
             </div>
             <div className="tm-yellow-strip" data-lit={s.paperMode || undefined}>
               <div className="tm-yellow-row">
                 <strong>PRINT &amp; PDF CARD</strong>
-                <span>A LEN 0.82 m · B OD 6.50″ · D ID 2.25″</span>
+                <span>A LEN 0.82 m · B OD 170 mm · D ID 57 mm</span>
               </div>
             </div>
           </div>
@@ -321,18 +321,18 @@ export function WallTile({ id = "tile-wall" }: { id?: string }) {
               <div className="sheet-card">
                 <strong>MOTOR · MTR-4418</strong>
                 <span>BOX 4 1/2 IF · PIN DS 38</span>
-                <div className="sheet-card-bar">9.42 m · 6.75″ OD</div>
+                <div className="sheet-card-bar">9.42 m · 171 mm OD</div>
               </div>
               <div className="sheet-card">
                 <strong>SUBS · SUB-2201</strong>
-                <span>BOX 4 1/2 IF · PIN DS 38</span>
-                <div className="sheet-card-bar">0.82 m · 6.50″ OD</div>
+                <span>BOX 4 1/2 XH · PIN 4 1/2 IF</span>
+                <div className="sheet-card-bar">0.82 m · 170 mm OD</div>
               </div>
               {layout === "wide" && (
                 <div className="sheet-card">
                   <strong>CUSTOM · CUST-204</strong>
                   <span>PIN DS 38 · BOX 4 1/2 IF</span>
-                  <div className="sheet-card-bar">11.40 m · 8.25″ OD</div>
+                  <div className="sheet-card-bar">11.40 m · 210 mm OD</div>
                 </div>
               )}
             </div>

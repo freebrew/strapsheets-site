@@ -10,10 +10,10 @@ import "./scene.css";
  * Single-Column Long BHA Depiction — Inventory Workflow Preview.
  * Tools stack in a single vertical column from Bit (01) through Jars (11).
  * Every addition updates the additive Total Length and dynamically detects
- * the minimum and maximum common metrics across the string:
+ * the minimum and maximum common metrics across the string in metric units:
  *   - Additive Total Length (m)
- *   - Maximum OD (in) & Minimum OD (in)
- *   - Minimum Bore ID (in) & Maximum Bore ID (in)
+ *   - Maximum OD (mm) & Minimum OD (mm)
+ *   - Minimum Bore ID (mm) & Maximum Bore ID (mm)
  */
 
 type Build = { shown: number };
@@ -44,15 +44,11 @@ const script = async (a: Act<Build>) => {
   markBhaComplete();
 };
 
-function fmtIn(value: number) {
-  return value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
-}
-
 const RECORD_BADGE: Record<string, { text: string; kind: "max" | "min" | "neck" }> = {
-  bit: { text: "MAX OD 8.5″", kind: "max" },
-  pony: { text: "MIN OD 6.65″", kind: "neck" },
-  mwd: { text: "MAX ID 3.00″", kind: "neck" },
-  exciter: { text: "MIN ID 2.00″", kind: "min" },
+  bit: { text: "MAX OD 216 mm", kind: "max" },
+  pony: { text: "MIN OD 169 mm", kind: "neck" },
+  mwd: { text: "MAX ID 76 mm", kind: "neck" },
+  exciter: { text: "MIN ID 51 mm", kind: "min" },
 };
 
 export function BhaPreview() {
@@ -60,14 +56,14 @@ export function BhaPreview() {
   return (
     <Faux id="bha">
       <Stage
-        width={450}
+        width={436}
         height={790}
         theme={theme}
         greys="cool"
         play="once"
         initial={OPEN}
         poster={POSTER}
-        compact={{ below: 480, width: 358, height: 790 }}
+        compact={{ below: 420, width: 358, height: 790 }}
         script={script}
       >
         {(s, _rect, layout) => {
@@ -88,11 +84,11 @@ export function BhaPreview() {
                   </div>
                   <div className="bha-metric-box">
                     <span>MAX / MIN OD</span>
-                    <strong>{fmtIn(active.maxOdIn)}″ / {fmtIn(active.minOdIn)}″</strong>
+                    <strong>{active.maxOdMm} / {active.minOdMm} mm</strong>
                   </div>
                   <div className="bha-metric-box">
                     <span>MIN / MAX ID</span>
-                    <strong>{active.minIdIn.toFixed(2)}″ / {active.maxIdIn.toFixed(2)}″</strong>
+                    <strong>{active.minIdMm} / {active.maxIdMm} mm</strong>
                   </div>
                 </div>
               </div>
@@ -104,8 +100,8 @@ export function BhaPreview() {
                   const isCurrent = idx === count - 1;
                   const badge = RECORD_BADGE[piece.key];
                   const isBit = piece.key === "bit";
-                  const odRatio = isBit ? 100 : Math.round(70 + ((piece.odIn - 6.65) / 0.13) * 10);
-                  const rowHeightPx = isBit ? 26 : Math.round(14 + ((piece.odIn - 6.65) / 0.13) * 4);
+                  const odRatio = isBit ? 100 : Math.round(70 + ((piece.odMm - 169) / 3) * 10);
+                  const rowHeightPx = isBit ? 26 : Math.round(14 + ((piece.odMm - 169) / 3) * 4);
                   return (
                     <div
                       className="bha-vrow"
@@ -134,6 +130,7 @@ export function BhaPreview() {
                       <div className="bha-info-col">
                         <div className="bha-name-line">
                           <strong>{piece.name}</strong>
+                          {piece.jarSpecs && <span className="bha-jar-specs">{piece.jarSpecs}</span>}
                           {badge && !compact && (
                             <i className={`bha-tag bha-tag--${badge.kind}`} data-lit={isShown || undefined}>
                               {badge.text}
@@ -142,9 +139,13 @@ export function BhaPreview() {
                         </div>
                         <div className="bha-spec-line">
                           <span>+{piece.lengthM.toFixed(2)}m</span>
-                          <span>OD {fmtIn(piece.odIn)}″</span>
-                          {!compact && <span>ID {piece.idIn.toFixed(2)}″</span>}
+                          <span>OD {piece.odMm} mm</span>
+                          {!compact && <span>ID {piece.idMm} mm</span>}
                         </div>
+                      </div>
+                      <div className="bha-thread-col" aria-label="Threads">
+                        <span>TOP {piece.topThread}</span>
+                        <span>BTM {piece.btmThread}</span>
                       </div>
                       <div className="bha-sum-col">
                         <strong>{piece.totalLengthM.toFixed(2)} m</strong>

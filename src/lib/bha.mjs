@@ -1,17 +1,27 @@
-/** Inventory-workflow preview. Bit first, then up the string. Two NM Flex Monels. */
+/** Inventory-workflow preview. Bit first, then up the string. Two NM Flex Monels. All OD/ID in mm. */
 
 export const BHA_BUILD = [
-  { key: "bit", name: "Bit", lengthM: 0.35, odIn: 8.5, idIn: 2.25, art: "Bit" },
-  { key: "motor", name: "Motor", lengthM: 9.42, odIn: 6.75, idIn: 2.81, art: "Motor" },
-  { key: "stab", name: "Stabilized Sub", lengthM: 1.52, odIn: 6.78, idIn: 2.81, art: "StabSub" },
-  { key: "pony", name: "NM Pony", lengthM: 1.2, odIn: 6.65, idIn: 2.81, art: "NMPony" },
-  { key: "mwd", name: "MWD Carrier", lengthM: 2.44, odIn: 6.72, idIn: 3.0, art: "MWDCarrier" },
-  { key: "flex-a", name: "NM Flex Monel", lengthM: 9.3, odIn: 6.69, idIn: 2.81, art: "NMFlex" },
-  { key: "flex-b", name: "NM Flex Monel", lengthM: 9.3, odIn: 6.68, idIn: 2.81, art: "NMFlex" },
-  { key: "xo", name: "Subs", lengthM: 0.82, odIn: 6.71, idIn: 2.25, art: "Subs" },
-  { key: "exciter", name: "Exciter / Agitator", lengthM: 1.15, odIn: 6.66, idIn: 2.0, art: "Exciter" },
-  { key: "shock", name: "Shock Sub", lengthM: 1.48, odIn: 6.74, idIn: 2.25, art: "ShockSub" },
-  { key: "jars", name: "Jars", lengthM: 4.05, odIn: 6.67, idIn: 2.25, art: "Jars" },
+  { key: "bit", name: "Bit", lengthM: 0.35, odMm: 216, idMm: 57, topThread: "4 1/2 REG", btmThread: "—", art: "Bit" },
+  { key: "motor", name: "Motor", lengthM: 9.42, odMm: 171, idMm: 71, topThread: "4 1/2 IF", btmThread: "4 1/2 REG", art: "Motor" },
+  { key: "stab", name: "Stabilized Sub", lengthM: 1.52, odMm: 172, idMm: 71, topThread: "4 1/2 IF", btmThread: "4 1/2 IF", art: "StabSub" },
+  { key: "pony", name: "NM Pony", lengthM: 1.2, odMm: 169, idMm: 71, topThread: "4 1/2 IF", btmThread: "4 1/2 IF", art: "NMPony" },
+  { key: "mwd", name: "MWD Carrier", lengthM: 2.44, odMm: 171, idMm: 76, topThread: "4 1/2 IF", btmThread: "4 1/2 IF", art: "MWDCarrier" },
+  { key: "flex-a", name: "NM Flex Monel", lengthM: 9.3, odMm: 170, idMm: 71, topThread: "4 1/2 IF", btmThread: "4 1/2 IF", art: "NMFlex" },
+  { key: "flex-b", name: "NM Flex Monel", lengthM: 9.3, odMm: 169, idMm: 71, topThread: "4 1/2 IF", btmThread: "4 1/2 IF", art: "NMFlex" },
+  { key: "xo", name: "Subs - X-Over", lengthM: 0.82, odMm: 170, idMm: 57, topThread: "4 1/2 XH", btmThread: "4 1/2 IF", art: "Subs" },
+  { key: "exciter", name: "Exciter / Agitator", lengthM: 5.45, odMm: 169, idMm: 51, topThread: "4 1/2 XH", btmThread: "4 1/2 XH", art: "Exciter" },
+  { key: "shock", name: "Shock Sub", lengthM: 5.68, odMm: 171, idMm: 57, topThread: "4 1/2 XH", btmThread: "4 1/2 XH", art: "ShockSub" },
+  {
+    key: "jars",
+    name: "Jars",
+    jarSpecs: "UP 48K DN 22K SEC 39",
+    lengthM: 6.35,
+    odMm: 170,
+    idMm: 57,
+    topThread: "4 1/2 XH",
+    btmThread: "4 1/2 XH",
+    art: "Jars",
+  },
 ];
 
 function round3(n) {
@@ -19,7 +29,7 @@ function round3(n) {
 }
 
 /**
- * Additive total length plus detected minimum and maximum common metrics (OD and ID)
+ * Additive total length plus detected minimum and maximum common metrics (OD and ID in mm)
  * after each piece is added to the single-column BHA.
  */
 export function bhaProgress(pieces = BHA_BUILD) {
@@ -36,20 +46,20 @@ export function bhaProgress(pieces = BHA_BUILD) {
   return pieces.map((piece, index) => {
     const prevLengthM = lengthM;
     lengthM = round3(lengthM + piece.lengthM);
-    if (piece.odIn > largestOd) {
-      largestOd = piece.odIn;
+    if (piece.odMm > largestOd) {
+      largestOd = piece.odMm;
       maxOdKey = piece.key;
     }
-    if (piece.odIn < smallestOd) {
-      smallestOd = piece.odIn;
+    if (piece.odMm < smallestOd) {
+      smallestOd = piece.odMm;
       minOdKey = piece.key;
     }
-    if (piece.idIn < smallestId) {
-      smallestId = piece.idIn;
+    if (piece.idMm < smallestId) {
+      smallestId = piece.idMm;
       minIdKey = piece.key;
     }
-    if (piece.idIn > largestId) {
-      largestId = piece.idIn;
+    if (piece.idMm > largestId) {
+      largestId = piece.idMm;
       maxIdKey = piece.key;
     }
     return {
@@ -57,11 +67,11 @@ export function bhaProgress(pieces = BHA_BUILD) {
       stepNumber: index + 1,
       prevLengthM,
       totalLengthM: lengthM,
-      largestOdIn: largestOd,
-      maxOdIn: largestOd,
-      minOdIn: smallestOd,
-      minIdIn: smallestId,
-      maxIdIn: largestId,
+      largestOdMm: largestOd,
+      maxOdMm: largestOd,
+      minOdMm: smallestOd,
+      minIdMm: smallestId,
+      maxIdMm: largestId,
       maxOdKey,
       minOdKey,
       minIdKey,

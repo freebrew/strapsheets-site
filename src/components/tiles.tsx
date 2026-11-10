@@ -88,8 +88,8 @@ export function CustomMorphTile() {
               </svg>
             </div>
             <div className="cm-chips-row">
-              <span className="cm-chip" data-lit>A Upset OD · 6.75″</span>
-              <span className="cm-chip" data-lit={s.phase >= 2 || undefined}>B Spiral OD · 8.25″ (step 18)</span>
+              <span className="cm-chip" data-lit>A Upset OD · 171 mm</span>
+              <span className="cm-chip" data-lit={s.phase >= 2 || undefined}>B Spiral OD · 210 mm (step 18)</span>
               <span className="cm-chip" data-lit={s.phase >= 3 || undefined}>C Length · 3.10 m</span>
             </div>
           </div>
@@ -134,13 +134,13 @@ export function ThemeMorphTile() {
                 <svg viewBox={subs.viewBox} aria-hidden="true">
                   <g dangerouslySetInnerHTML={{ __html: subs.markup }} />
                 </svg>
-                <div className="tm-meta">SUB-2201 · Highlighted: B (6.50″)</div>
+                <div className="tm-meta">SUB-2201 · Highlighted: B (170 mm)</div>
               </div>
               <div className="tm-pane tm-pane--light" data-lit={s.paperMode || undefined}>
                 <span className="tm-tag">Print &amp; PDF (#ffffff paper)</span>
                 <div className="tm-yellow-card">
                   <strong>SUBS · SUB-2201</strong>
-                  <div><span>A LEN 0.82 m</span><span>B OD 6.50″</span><span>D ID 2.25″</span></div>
+                  <div><span>A LEN 0.82 m</span><span>B OD 170 mm</span><span>D ID 57 mm</span></div>
                 </div>
               </div>
             </div>
@@ -164,8 +164,8 @@ export function ConfirmTile() {
               <path d="M40 62 h70" stroke="var(--ss-text-faint)" strokeWidth="1" />
             </svg>
             <div className="metric">
-              <div><span>A LEN</span><span>9.42</span></div>
-              <div><span>B OD</span><span>6.75</span></div>
+              <div><span>A LEN</span><span>9.42 m</span></div>
+              <div><span>B OD</span><span>171 mm</span></div>
             </div>
           </div>
         )}
@@ -235,17 +235,17 @@ export function WallTile({ id = "tile-wall" }: { id?: string }) {
             <div className="wall-cards-col">
               <div className="sheet-card">
                 <strong>MOTOR</strong>
-                <span>MTR-4418 · 6.75″ OD</span>
+                <span>MTR-4418 · 171 mm OD</span>
                 <em>9.42 m</em>
               </div>
               <div className="sheet-card">
                 <strong>SUBS</strong>
-                <span>SUB-2201 · 6.50″ OD</span>
+                <span>SUB-2201 · 170 mm OD</span>
                 <em>0.82 m</em>
               </div>
               <div className="sheet-card">
                 <strong>CUSTOM</strong>
-                <span>CUST-204 · 8.25″ OD</span>
+                <span>CUST-204 · 210 mm OD</span>
                 <em>11.40 m</em>
               </div>
             </div>
@@ -301,7 +301,7 @@ export function HowPair() {
                 <div style={{ padding: 12, display: "grid", gap: 4 }}>
                   <Row title="Motor" subtitle="MTR-4418" meta="9.42 m" pad={8} />
                   <Row title="Sub" subtitle="SUB-2201" meta="1.20 m" pad={8} />
-                  {layout === "compact" ? null : <Row title="Jars" subtitle="JAR-1180" meta="4.05 m" pad={8} />}
+                  {layout === "compact" ? null : <Row title="Jars" subtitle="JAR-1180" meta="6.35 m" pad={8} />}
                 </div>
               </Window>
             </div>

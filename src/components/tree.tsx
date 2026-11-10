@@ -61,26 +61,26 @@ export function DirectoryPreview() {
               <div className="tree-folder" data-on={s.step >= 1 || undefined}>
                 <div className="tree-row-head"><Icon name="archive" /><span>Motor/</span></div>
                 <div className="tree-file" data-lit={s.step === 2 || undefined}>
-                  <Icon name="file" /><span>MTR-4418.pdf</span><em>9.42 m · 6.75″</em>
+                  <Icon name="file" /><span>MTR-4418.pdf</span><em>9.42 m · 171 mm</em>
                 </div>
               </div>
               <div className="tree-folder" data-on={s.step >= 2 || undefined}>
                 <div className="tree-row-head"><Icon name="archive" /><span>Subs/</span></div>
                 <div className="tree-file" data-lit={s.step === 3 || undefined}>
-                  <Icon name="file" /><span>SUB-2201.pdf</span><em>0.82 m · 6.50″</em>
+                  <Icon name="file" /><span>SUB-2201.pdf</span><em>0.82 m · 170 mm</em>
                 </div>
               </div>
               {layout === "wide" && (
                 <div className="tree-folder" data-on={s.step >= 3 || undefined}>
                   <div className="tree-row-head"><Icon name="archive" /><span>Custom/</span></div>
                   <div className="tree-file" data-lit={s.step === 4 || undefined}>
-                    <Icon name="file" /><span>CUST-204.pdf</span><em>11.40 m · 8.25″</em>
+                    <Icon name="file" /><span>CUST-204.pdf</span><em>11.40 m · 210 mm</em>
                   </div>
                 </div>
               )}
               <div className="tree-folder" data-on>
                 <div className="tree-row-head"><Icon name="archive" /><span>Jars &amp; Shock/</span></div>
-                <div className="tree-file"><Icon name="file" /><span>JAR-1180.pdf · SHK-14.pdf</span><em>5.53 m</em></div>
+                <div className="tree-file"><Icon name="file" /><span>JAR-1180.pdf · SHK-14.pdf</span><em>12.03 m</em></div>
               </div>
             </div>
           </div>
