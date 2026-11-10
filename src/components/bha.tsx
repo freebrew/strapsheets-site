@@ -12,7 +12,7 @@ import "./scene.css";
  * Single-Column Vertical BHA Depiction — Inventory Workflow Preview.
  * Tools are oriented vertically, scaled to their posted length, and torqued together
  * shoulder-to-shoulder from Bit (01) through Jars (11), with WebGL 3D axial rotation
- * (clockwise looking up) and OD/ID chart make-up torques animating between kN·m and ft·lbs.
+ * (counter-clockwise looking up, helical blades twisted to match) and OD/ID chart make-up torques animating between kN·m and ft·lbs.
  */
 
 type Build = { shown: number };
@@ -86,7 +86,7 @@ export function BhaPreview() {
             <div className="bha-column-scene" data-layout={layout} data-crop>
               <div className="bha-head">
                 <div className="bha-title-row">
-                  <span className="bha-kicker">SINGLE-COLUMN BHA · 3D AXIAL CW ↑</span>
+                  <span className="bha-kicker">SINGLE-COLUMN BHA · 3D AXIAL CCW ↑</span>
                   <span className="bha-unit-pill" data-unit={torqueUnit}>
                     <i data-active={torqueUnit === "kNm" || undefined}>kN·m</i>
                     <span>⇄</span>
@@ -216,3 +216,5 @@ export function BhaPreview() {
 }
 
 export const BHA_NAMES = BHA_BUILD.map((piece) => piece.name);
+
+

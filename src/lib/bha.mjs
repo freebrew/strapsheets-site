@@ -4,62 +4,22 @@
  * derived from API RP 7G / IADC and Command-SMFI drill-collar OD × Bore ID make-up torque tables.
  */
 
-const KNM_PER_FTLB = 0.001355818;
-
 /**
- * Verified API RP 7G / IADC & Command-SMFI recommended minimum make-up torque (ft·lbs and kN·m)
- * as a function of thread connection, outside diameter (odMm), and bore inside diameter (idMm).
- *
- * Reference anchors (API RP 7G Table / Evolution Drilling & Command-SMFI Drill Collar Tables):
- *   - 4 1/2 REG (OD 152–172 mm):
- *       ID 51 mm (2"):       23,686 ft·lbs (32.1 kN·m)
- *       ID 57 mm (2 1/4"):   21,749 ft·lbs (29.5 kN·m)
- *       ID 63.5 mm (2 1/2"): 19,601 ft·lbs (26.6 kN·m)
- *       ID 71 mm (2 13/16"): 16,629 ft·lbs (22.5 kN·m)
- *   - 4 1/2 XH / API NC46 (OD 159–172 mm, pin-tension governed):
- *       ID 57 mm (2 1/4"):   28,021 ft·lbs (38.0 kN·m)
- *       ID 63.5 mm (2 1/2"): 25,676 ft·lbs (34.8 kN·m)
- *       ID 71 mm (2 13/16"): 22,426 ft·lbs (30.4 kN·m)
- *       ID 76 mm (3"):       20,311 ft·lbs (27.5 kN·m)
- *   - 4 1/2 IF / API NC50 (OD 165.1–171.5 mm, combined box-bucking & pin-tension curve):
- *       OD 169 mm (6.65"), ID 51 mm (2"):     33,900 ft·lbs (46.0 kN·m)
- *       OD 170 mm (6.69"), ID 57 mm (2 1/4"): 35,100 ft·lbs (47.6 kN·m)
- *       OD 171 mm (6.73"), ID 57 mm (2 1/4"): 35,824 ft·lbs (48.6 kN·m)
+ * One snapped make-up torque per thread, so the same thread reads the same everywhere on the string.
+ * Values are rounded to the nearest 500 ft·lbs from published API RP 7G / IADC drill-collar make-up
+ * tables (4 1/2 REG ~22,000, 4 1/2 XH ~25,000, 4 1/2 IF ~35,000). They are approximations for the
+ * preview, not a substitute for the manufacturer's chart.
  */
-export function apiMakeUpTorque(thread, odMm, idMm) {
-  if (!thread || thread === "—") return null;
+const SNAPPED_TORQUE = {
+  "4 1/2 REG": { ftLbs: 22000, kNm: 30 },
+  "4 1/2 XH": { ftLbs: 25000, kNm: 34 },
+  "4 1/2 IF": { ftLbs: 35000, kNm: 47 },
+};
 
-  let ftLbs = 0;
-  if (thread === "4 1/2 REG") {
-    if (idMm <= 51) ftLbs = 23690;
-    else if (idMm <= 57) ftLbs = 21750;
-    else if (idMm <= 64) ftLbs = 19600;
-    else ftLbs = 16630;
-  } else if (thread === "4 1/2 XH") {
-    // API NC46: pin wall thickness (controlled by ID) governs above 159 mm (6 1/4") OD,
-    // with slight collar OD seating adjustment across 169–172 mm.
-    if (idMm <= 57) ftLbs = 28020;
-    else if (idMm <= 64) ftLbs = 25680;
-    else if (idMm <= 71) {
-      ftLbs = odMm >= 172 ? 22550 : odMm === 171 ? 22430 : odMm === 170 ? 22310 : 22190;
-    } else {
-      ftLbs = 20310;
-    }
-  } else if (thread === "4 1/2 IF") {
-    // API NC50: between 6 1/2" (165.1 mm, 29,679 ft·lbs) and 6 3/4" (171.5 mm, 36,742 / 35,824 ft·lbs)
-    // box wall thickness and bore ID both govern.
-    if (odMm <= 169 && idMm <= 51) ftLbs = 33900;
-    else if (odMm === 170 && idMm <= 57) ftLbs = 35100;
-    else if (odMm >= 171 && idMm <= 57) ftLbs = 35820;
-    else ftLbs = 32280;
-  } else {
-    return null;
-  }
-
-  const kNm = Math.round(ftLbs * KNM_PER_FTLB * 10) / 10;
-  return { ftLbs, kNm };
+export function apiMakeUpTorque(thread) {
+  const spec = SNAPPED_TORQUE[thread];
+  return spec ? { ...spec } : null;
 }
-
 const RAW_BHA = [
   {
     key: "bit",
@@ -245,3 +205,4 @@ export function bhaProgress(pieces = BHA_BUILD) {
     };
   });
 }
+

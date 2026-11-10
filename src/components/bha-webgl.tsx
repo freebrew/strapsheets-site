@@ -18,7 +18,7 @@ void main() {
 `;
 
 // Fragment shader: raycasts a 3D vertical cylindrical BHA string with per-tool axial & azimuthal
-// geometry R(v, phi) rotating clockwise looking up (+u_angle shifts front-face features right-to-left).
+// geometry R(v, phi) rotating counter-clockwise looking up (front-face features travel left-to-right).
 const FRAG_SRC = `
 precision highp float;
 varying vec2 v_uv;
@@ -52,7 +52,7 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
     if (v < 0.74) {
       float cv = v / 0.74;
       float crownEnv = smoothstep(0.0, 0.16, cv) * (1.0 - 0.08 * smoothstep(0.78, 1.0, cv));
-      float bladeWave = cos(5.0 * phi - 2.4 * cv);
+      float bladeWave = cos(5.0 * phi + 2.4 * cv);
       float blade = smoothstep(-0.15, 0.35, bladeWave);
       r = mix(0.56, 0.89 * crownEnv + 0.10, blade);
       relief += 0.42 * bladeWave;
@@ -82,7 +82,7 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
   } else if (idx == 1) {
     // 02 Motor: lower & upper spiral wear pads + bent-housing ring + stator flutes
     if ((v > 0.18 && v < 0.29) || (v > 0.46 && v < 0.57)) {
-      float padWave = cos(4.0 * phi - 7.0 * v);
+      float padWave = cos(4.0 * phi + 7.0 * v);
       float pad = smoothstep(0.0, 0.5, padWave);
       r += 0.065 * pad;
       relief += 0.35 * padWave;
@@ -93,14 +93,14 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
       band = max(band, 0.7);
     } else if (v > 0.60 && v < 0.94) {
       // Power section multi-lobe helical sheen
-      relief += 0.12 * cos(5.0 * phi + 9.0 * v);
+      relief += 0.12 * cos(5.0 * phi - 9.0 * v);
     }
   } else if (idx == 2) {
     // 03 Stabilized Sub: 3 wide helical spiral stabilizer blades wrapping around the body
     if (v > 0.18 && v < 0.78) {
       float sv = (v - 0.18) / 0.60;
       float env = smoothstep(0.0, 0.18, sv) * smoothstep(1.0, 0.82, sv);
-      float bWave = cos(3.0 * phi - 3.6 * sv);
+      float bWave = cos(3.0 * phi + 3.6 * sv);
       float blade = smoothstep(-0.05, 0.45, bWave);
       r += 0.19 * env * blade;
       relief += 0.48 * env * bWave;
@@ -108,14 +108,14 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
     }
   } else if (idx == 3) {
     // 04 NM Pony: slick non-mag collar with rotating handling recess & turn marks
-    relief += 0.08 * cos(2.0 * phi - 8.0 * v);
+    relief += 0.08 * cos(2.0 * phi + 8.0 * v);
     if (v > 0.45 && v < 0.55) {
       band = max(band, 0.28);
     }
   } else if (idx == 4) {
     // 05 MWD Carrier: helical centralizer fins + PEEK gap sub insulator band
     if (v > 0.20 && v < 0.38) {
-      float finWave = cos(4.0 * phi - 4.5 * v);
+      float finWave = cos(4.0 * phi + 4.5 * v);
       float fin = smoothstep(0.1, 0.6, finWave);
       r += 0.045 * fin;
       relief += 0.28 * finWave;
@@ -132,7 +132,7 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
       if (d < 0.065) {
         float dip = 0.5 * (1.0 + cos(d / 0.065 * PI));
         r -= 0.105 * dip;
-        relief += 0.22 * dip * cos(3.0 * phi - 14.0 * v);
+        relief += 0.22 * dip * cos(3.0 * phi + 14.0 * v);
         band = max(band, 0.30 * dip);
       }
     }
@@ -152,7 +152,7 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
       relief += 0.28 * neck * cos(4.0 * phi);
       band = max(band, 0.50 * neck);
     } else {
-      relief += 0.14 * cos(4.0 * phi - 6.0 * v);
+      relief += 0.14 * cos(4.0 * phi + 6.0 * v);
     }
   } else if (idx == 9) {
     // 10 Shock Sub: recessed upper splined Kelly mandrel (6 rotating axial splines)
@@ -212,10 +212,10 @@ void main() {
   float ease = smoothstep(0.0, 1.0, appear);
   float v = clamp((py - y0 - (1.0 - ease) * 18.0) / max(1.0, y1 - y0), 0.0, 1.0);
 
-  // Clockwise looking up the BHA axis (-Y):
-  // Front-face features move from right (+X) to left (-X) as u_time increases.
+  // Counter-clockwise looking up the BHA axis (reversed):
+  // Front-face features move from left (-X) to right (+X) as u_time increases.
   float omega = 1.65;
-  float rotAngle = u_time * omega + (1.0 - ease) * 1.8;
+  float rotAngle = -(u_time * omega + (1.0 - ease) * 1.8);
 
   // First-pass angle estimate on the cylinder
   float uEst = clamp(cx / max(0.35, baseR), -0.999, 0.999);
@@ -417,3 +417,4 @@ export function BhaWebglColumn({
     />
   );
 }
+

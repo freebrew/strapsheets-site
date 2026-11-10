@@ -32,22 +32,18 @@ test("BHA order, torqued thread continuity across X-Over, and OD/ID chart torque
     );
   }
 
-  // Verified API RP 7G / Command-SMFI OD × ID make-up torque chart lookups:
-  // 4 1/2 REG @ 57 mm (2 1/4") ID -> 21,750 ft·lbs (29.5 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 REG", 216, 57), { ftLbs: 21750, kNm: 29.5 });
-  // 4 1/2 XH (NC46) @ 171 mm OD, 71 mm (2 13/16") ID -> 22,430 ft·lbs (30.4 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 XH", 171, 71), { ftLbs: 22430, kNm: 30.4 });
-  // 4 1/2 XH (NC46) @ 171 mm OD, 76 mm (3") ID (MWD Carrier) -> 20,310 ft·lbs (27.5 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 XH", 171, 76), { ftLbs: 20310, kNm: 27.5 });
-  // 4 1/2 XH (NC46) @ 170 mm OD, 57 mm (2 1/4") ID (X-Over TOP) -> 28,020 ft·lbs (38.0 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 XH", 170, 57), { ftLbs: 28020, kNm: 38.0 });
-  // 4 1/2 IF (NC50) @ 169 mm OD, 51 mm (2") ID (Exciter) -> 33,900 ft·lbs (46.0 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 IF", 169, 51), { ftLbs: 33900, kNm: 46.0 });
-  // 4 1/2 IF (NC50) @ 170 mm OD, 57 mm (2 1/4") ID (X-Over BTM & Jars) -> 35,100 ft·lbs (47.6 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 IF", 170, 57), { ftLbs: 35100, kNm: 47.6 });
-  // 4 1/2 IF (NC50) @ 171 mm OD, 57 mm (2 1/4") ID (Shock Sub) -> 35,820 ft·lbs (48.6 kN·m)
-  assert.deepEqual(apiMakeUpTorque("4 1/2 IF", 171, 57), { ftLbs: 35820, kNm: 48.6 });
-
+  // One snapped torque per thread, identical everywhere it appears.
+  assert.deepEqual(apiMakeUpTorque("4 1/2 REG"), { ftLbs: 22000, kNm: 30 });
+  assert.deepEqual(apiMakeUpTorque("4 1/2 XH"), { ftLbs: 25000, kNm: 34 });
+  assert.deepEqual(apiMakeUpTorque("4 1/2 IF"), { ftLbs: 35000, kNm: 47 });
+  const seen = new Map();
+  for (const piece of BHA_BUILD) {
+    for (const [thread, ft] of [[piece.topThread, piece.topTorqueFtLbs], [piece.btmThread, piece.btmTorqueFtLbs]]) {
+      if (ft == null) continue;
+      assert.equal(seen.get(thread) ?? ft, ft, `${thread} torque must match everywhere`);
+      seen.set(thread, ft);
+    }
+  }
   // Tools with identical TOP & BTM threads have sameThread = true (single torque shown);
   // crossovers (Motor and Subs - X-Over) have sameThread = false (both TOP & BTM torques shown).
   const xo = BHA_BUILD[7];
@@ -55,10 +51,10 @@ test("BHA order, torqued thread continuity across X-Over, and OD/ID chart torque
   assert.equal(xo.sameThread, false);
   assert.equal(xo.topThread, "4 1/2 XH");
   assert.equal(xo.btmThread, "4 1/2 IF");
-  assert.equal(xo.topTorqueKnm, 38.0);
-  assert.equal(xo.topTorqueFtLbs, 28020);
-  assert.equal(xo.btmTorqueKnm, 47.6);
-  assert.equal(xo.btmTorqueFtLbs, 35100);
+  assert.equal(xo.topTorqueKnm, 34);
+  assert.equal(xo.topTorqueFtLbs, 25000);
+  assert.equal(xo.btmTorqueKnm, 47);
+  assert.equal(xo.btmTorqueFtLbs, 35000);
 
   for (const idx of [2, 3, 4, 5, 6, 8, 9, 10]) {
     assert.equal(BHA_BUILD[idx].sameThread, true, `${BHA_BUILD[idx].name} has matching TOP and BTM threads`);
@@ -114,3 +110,4 @@ test("additive length and min/max OD and ID metrics (in mm) update after every a
     assert.ok(piece.odMm >= 168 && piece.odMm <= 173, `${piece.name} OD (${piece.odMm} mm) stays within a few mm of 171 mm`);
   }
 });
+
