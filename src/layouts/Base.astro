@@ -47,9 +47,11 @@ const here = Astro.url.pathname.replace(/\/$/, "") || "/";
     <main>
       <slot />
     </main>
-    <footer class="site">
-      <p>StrapSheets is published by an individual developer. The store listing shows the legal name.</p>
-      <p>Privacy and Terms on this site are a working draft dated 6 November 2026. Have them read before the apps go on sale.</p>
-    </footer>
+    {page !== "home" && (
+      <footer class="site">
+        <p>StrapSheets is published by an individual developer. The store listing shows the legal name.</p>
+        <p>Privacy and Terms on this site are a working draft dated 6 November 2026. Have them read before the apps go on sale.</p>
+      </footer>
+    )}
   </body>
 </html>

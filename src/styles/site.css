@@ -193,6 +193,10 @@ body[data-page="home"] main::after {
 .tile--settings { grid-area: settings; }
 .tile--bha,
 .tile--sheets {
+  /* height: 100% plus the tile's padding and border made each tile 34px taller than its grid row:
+     the BHA tile ran under the sheets tile, and the column's overflow cut off the sheets tile's
+     bottom corners and caption. */
+  box-sizing: border-box;
   min-height: 0;
   height: 100%;
   display: flex;
