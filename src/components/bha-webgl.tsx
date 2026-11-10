@@ -38,8 +38,9 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
   float relief = 0.0;
   float band = 0.0;
 
-  // Machined make-up shoulder chamfers at top (v=0) and bottom (v=1) of each torqued connection
-  float jointDist = min(v, 1.0 - v);
+  // Machined make-up shoulder at each torqued connection. The jars are the end of the
+  // string, so they keep the upper shoulder and finish in steel instead of a seam.
+  float jointDist = idx == 10 ? v : min(v, 1.0 - v);
   if (jointDist < 0.028) {
     float j = 1.0 - jointDist / 0.028;
     r -= 0.028 * j;
@@ -48,36 +49,31 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
   }
 
   if (idx == 0) {
-    // 01 Bit (216 mm PDC Bit): 5 helical PDC blades & cutters on top crown (v < 0.74), 171 mm shank below
-    if (v < 0.74) {
-      float cv = v / 0.74;
-      float crownEnv = smoothstep(0.0, 0.16, cv) * (1.0 - 0.08 * smoothstep(0.78, 1.0, cv));
-      float bladeWave = cos(5.0 * phi + 2.4 * cv);
-      float blade = smoothstep(-0.15, 0.35, bladeWave);
-      r = mix(0.56, 0.89 * crownEnv + 0.10, blade);
-      relief += 0.42 * bladeWave;
-      // Hardfaced gauge pad band on outer blades
-      if (cv > 0.28 && cv < 0.82 && blade > 0.6) {
-        band = max(band, 0.45);
-      }
-      // Circular PDC diamond cutter pockets along blade leading edges
-      float cutterRow = sin(cv * 26.0);
-      float cutterEdge = exp(-pow((bladeWave - 0.45) * 4.2, 2.0));
-      if (cutterRow > 0.25 && cv > 0.08 && cv < 0.76) {
-        float cstud = smoothstep(0.25, 0.85, cutterRow) * cutterEdge;
-        r += 0.032 * cstud;
-        relief += 0.65 * cstud;
-        band = max(band, 0.85 * cstud);
-      }
-    } else {
-      // Bit shank (171 mm) with 2 rotating bit-breaker wrench flats
-      r = 0.56;
-      if (v > 0.80 && v < 0.93) {
-        float flatCut = smoothstep(0.45, 0.85, cos(2.0 * phi));
-        r -= 0.055 * flatCut;
-        relief -= 0.35 * flatCut;
-        band = max(band, 0.5 * flatCut);
-      }
+    // 01 Bit: a PDC head. Five short blades stay on the face. The gauge is the long
+    // full-diameter section under them, then the shoulder and the pin.
+    float shank = baseR * 0.74;
+    // The nose opens to gauge, and that full diameter holds for the gauge length
+    // before the shoulder steps down to the pin. Blades stay on the face.
+    float crown = smoothstep(0.0, 0.14, v);
+    float headR = mix(baseR * 0.50, baseR * 0.96, crown);
+    r = mix(headR, shank, smoothstep(0.62, 0.74, v));
+    float bladeSpan = smoothstep(0.04, 0.09, v) * (1.0 - smoothstep(0.12, 0.22, v));
+    float bladeWave = cos(5.0 * phi);
+    float blade = smoothstep(-0.15, 0.65, bladeWave);
+    r += baseR * 0.028 * (blade - 0.35) * bladeSpan;
+    float cutter = exp(-pow(fract((v - 0.06) / 0.14 * 3.0) - 0.5, 2.0) * 16.0);
+    cutter *= smoothstep(0.45, 0.9, bladeWave) * bladeSpan;
+    r += baseR * 0.02 * cutter;
+    relief += 0.16 * bladeWave * bladeSpan + 0.14 * cutter;
+    band = max(band, 0.7 * cutter);
+    if (v > 0.70 && v < 0.90) {
+      float flatCut = smoothstep(0.55, 0.95, cos(2.0 * phi));
+      r -= shank * 0.05 * flatCut;
+      relief -= 0.12 * flatCut;
+      band = max(band, 0.30 * flatCut);
+    }
+    if (v > 0.94) {
+      r -= shank * 0.08 * smoothstep(0.94, 1.0, v);
     }
   } else if (idx == 1) {
     // 02 Motor: lower & upper spiral wear pads + bent-housing ring + stator flutes
@@ -96,15 +92,16 @@ vec3 toolGeometry(int idx, float v, float phi, float baseR) {
       relief += 0.12 * cos(5.0 * phi - 9.0 * v);
     }
   } else if (idx == 2) {
-    // 03 Stabilized Sub: 3 wide helical spiral stabilizer blades wrapping around the body
-    if (v > 0.18 && v < 0.78) {
-      float sv = (v - 0.18) / 0.60;
-      float env = smoothstep(0.0, 0.18, sv) * smoothstep(1.0, 0.82, sv);
-      float bWave = cos(3.0 * phi + 3.6 * sv);
-      float blade = smoothstep(-0.05, 0.45, bWave);
-      r += 0.19 * env * blade;
-      relief += 0.48 * env * bWave;
-      band = max(band, 0.40 * env * blade);
+    // 03 Stabilized Sub: a full body with three helical blades. Each blade is a wide land
+    // (both flanks), blended back into the body at the neck so the wrap is a closed surface.
+    if (v > 0.06 && v < 0.94) {
+      float sv = (v - 0.06) / 0.88;
+      float env = smoothstep(0.0, 0.14, sv) * smoothstep(1.0, 0.86, sv);
+      float bWave = cos(3.0 * phi + 3.4 * sv);
+      float blade = pow(clamp(bWave, 0.0, 1.0), 0.55);
+      r *= 1.0 + 0.24 * env * blade;
+      relief += 0.20 * env * bWave;
+      band = max(band, 0.22 * env * blade);
     }
   } else if (idx == 3) {
     // 04 NM Pony: slick non-mag collar with rotating handling recess & turn marks
@@ -210,7 +207,14 @@ void main() {
     return;
   }
   float ease = smoothstep(0.0, 1.0, appear);
-  float v = clamp((py - y0 - (1.0 - ease) * 18.0) / max(1.0, y1 - y0), 0.0, 1.0);
+  // The bit crown is the top of the string. Leave room above it so the nose is in the
+  // frame instead of being sliced off on the first pixel of the row.
+  float head = toolIdx == 0 ? 6.0 : 0.0;
+  if (py < y0 + head) {
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    return;
+  }
+  float v = clamp((py - y0 - head - (1.0 - ease) * 18.0) / max(1.0, y1 - y0 - head), 0.0, 1.0);
 
   // Counter-clockwise looking up the BHA axis (reversed):
   // Front-face features move from left (-X) to right (+X) as u_time increases.
@@ -224,6 +228,15 @@ void main() {
 
   vec3 geom = toolGeometry(toolIdx, v, phi, baseR);
   float r = geom.x;
+  // A second sample on the real radius gives the bit crown and the stabilizer blades
+  // a flank on each side. The first sample used the plain body, which clamped every
+  // pixel past that body to one edge and left those faces unbuilt.
+  float uHit = clamp(cx / max(0.12, r), -0.999, 0.999);
+  float phiHit = asin(uHit) + rotAngle;
+  if (abs(phiHit - phi) > 0.035) {
+    geom = toolGeometry(toolIdx, v, phiHit, baseR);
+    r = geom.x;
+  }
   float relief = geom.y;
   float band = geom.z;
 
@@ -263,8 +276,8 @@ void main() {
   col += grain;
   col = mix(col, bandCol, band * 0.55);
 
-  // Darken the 1.5 px make-up shoulder seam line at the bottom of each tool
-  if (v > 0.975) {
+  // Darken the make-up seam at the bottom of each tool. The jars are the end of the string.
+  if (toolIdx != 10 && v > 0.975) {
     col *= 0.42;
   }
 

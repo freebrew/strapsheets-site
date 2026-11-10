@@ -333,9 +333,6 @@
   transform: translate3d(0, 0, 0) scaleY(1);
 }
 .bha-vrow[data-current] .bha-idx { color: var(--ss-accent-text); font-weight: 700; }
-.bha-vrow[data-current] .bha-well-col {
-  box-shadow: inset 0 2px 0 var(--ss-accent);
-}
 .bha-idx {
   align-self: center;
   font-family: var(--ss-mono);

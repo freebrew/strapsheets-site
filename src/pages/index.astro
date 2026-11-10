@@ -1,10 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { HeroEntry } from "../components/hero";
 import { BhaPreview } from "../components/bha";
-import { DirectoryPreview } from "../components/tree";
-import { CustomMorphTile, ThemeMorphTile, WallTile } from "../components/home-tiles";
 import { WEB_APP_URL } from "../site";
 
 const features = (await getCollection("features"))[0]?.data;
@@ -17,66 +14,70 @@ const latest = (await getCollection("releases")).sort(
   <section class="feature-grid-section" aria-label="Technical Feature Grid">
     <div class="feature-grid-header">
       <span class="fg-coord">GRID // 01–05 · CONSOLE FIELD &amp; OFFICE WORKFLOW</span>
-      <h2>Built for the rig floor, the BHA sheet, and the office wall.</h2>
+      <h2>Built For The Rig Floor, The BHA Sheet, and The Office Wall.</h2>
     </div>
 
-    <div class="feature-grid">
-      <figure class="tile tile--bha">
-        <div class="cell"><BhaPreview client:only="react" /></div>
-        <figcaption><strong>Inventory Workflow Preview · Single-Column BHA.</strong> Tools stack from the bit up in a single vertical column. Additive total length updates at every station while Maximum OD (216 mm), Minimum OD (169 mm), and Minimum/Maximum Bore ID (51 mm / 76 mm) are detected automatically.</figcaption>
-      </figure>
+    <div class="landing">
+      <div class="landing-quad">
+        <div class="tile tile--copy">
+          <div class="hero-coord-badge">CONSOLE · FIELD &amp; OFFICE STRAP SHEETS</div>
+          <h1>Strap sheets, on the phone</h1>
+          <p class="lede">A directional driller measures the tool once. StrapSheets highlights the callout on the steel drawing, configures BOX and PIN ends in one step each, and hands a print-ready PDF to the mail app on the phone.</p>
+          <p class="cta-row">
+            <a class="button primary" href={WEB_APP_URL} target="_blank" rel="noopener">Open The Web Version</a>
+            <a class="button" href="/releases">Releases{latest ? ` · v${latest.data.version}` : ""}</a>
+          </p>
+          <div class="claims">
+            {features.headlines.map((item) => (
+              <div><strong>{item.title}</strong><span>{item.text}</span></div>
+            ))}
+          </div>
+          <p class="latest">
+            <strong>Latest release</strong> ·
+            {latest ? (
+              <span>
+                <strong>v{latest.data.version}</strong>{latest.data.webRev ? ` (${latest.data.webRev})` : ""} · {latest.data.date} — {latest.data.title ?? latest.data.notes}
+              </span>
+            ) : (
+              <span>Release notes land here with each store build.</span>
+            )}
+            · <a href="/releases">Release Summary</a>
+          </p>
+        </div>
 
-      <figure class="tile tile--custom">
-        <div class="cell"><CustomMorphTile client:only="react" /></div>
-        <figcaption><strong>Screen Animation · Tools Data Entry &amp; Custom Ends from BOX PIN Config.</strong> One section for BOX (Upper / TOP) and one section for PIN (Lower / BTM) configure once, the active callout ring glides across the dark steel drawing as measurements fill in, and Custom ends morph onto the tube with OD shape chips and a step-18 spiral hatch.</figcaption>
-      </figure>
+        <figure class="tile tile--entry">
+          <div class="cell cell--film"><video class="loop-film" src="/loops/entry.mp4" poster="/loops/entry-poster.png" autoplay muted loop playsinline></video></div>
+          <figcaption><strong>Data Entry.</strong> Tool, serial, material, BOX and PIN, one measure, then the card.</figcaption>
+        </figure>
 
-      <figure class="tile tile--directory">
-        <div class="cell"><DirectoryPreview client:only="react" /></div>
-        <figcaption><strong>Inventory Workflow Preview · Job Directory.</strong> Saved serial PDFs organize into family folders under the active job number. Preview of the upcoming inventory workflow.</figcaption>
-      </figure>
+        <figure class="tile tile--sessions">
+          <div class="cell cell--film"><video class="loop-film" src="/loops/sessions.mp4" poster="/loops/sessions-poster.png" autoplay muted loop playsinline></video></div>
+          <figcaption><strong>Sessions.</strong> Several PDFs, then Select, Inverse, a date range, and Delete.</figcaption>
+        </figure>
 
-      <figure class="tile tile--theme">
-        <div class="cell"><ThemeMorphTile client:only="react" /></div>
-        <figcaption><strong>Dark Screen SVG ⇄ Light Print &amp; PDF.</strong> Screen diagrams render inline over <code>--dg-surface</code> for dark and light themes; printed sheets and PDFs stay crisp on light paper.</figcaption>
-      </figure>
-
-      <figure class="tile tile--wall">
-        <div class="cell"><WallTile client:only="react" /></div>
-        <figcaption><strong>Ticked Sessions to Sorted Wall Cards.</strong> Select the day’s tools and email one combined PDF formatted to hang in family order on the office wall.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section class="hero-copy">
-    <div class="copy">
-      <div class="hero-coord-badge">CONSOLE · FIELD &amp; OFFICE STRAP SHEETS</div>
-      <h1>Strap sheets, on the phone.</h1>
-      <p class="lede">A directional driller measures the tool once. StrapSheets highlights the callout on the steel drawing, configures BOX and PIN ends in one step each, and hands a print-ready PDF to the mail app on the phone.</p>
-      <p class="cta-row">
-        <a class="button primary" href={WEB_APP_URL} target="_blank" rel="noopener">Open the Web Version</a>
-        <a class="button" href="/releases">Releases{latest ? ` · v${latest.data.version}` : ""}</a>
-      </p>
-      <div class="claims">
-        {features.headlines.map((item) => (
-          <div><strong>{item.title}</strong><span>{item.text}</span></div>
-        ))}
+        <figure class="tile tile--settings">
+          <div class="cell cell--film"><video class="loop-film" src="/loops/settings.mp4" poster="/loops/settings-poster.png" autoplay muted loop playsinline></video></div>
+          <figcaption><strong>Settings.</strong> Jobs, email addresses, and thread names, with Select, Inverse, Delete, and a date range.</figcaption>
+        </figure>
       </div>
-      <p class="latest">
-        <strong>Latest release</strong> ·
-        {latest ? (
-          <span>
-            <strong>v{latest.data.version}</strong>{latest.data.webRev ? ` (${latest.data.webRev})` : ""} · {latest.data.date} — {latest.data.title ?? latest.data.notes}
-          </span>
-        ) : (
-          <span>Release notes land here with each store build.</span>
-        )}
-        · <a href="/releases">Release Summary</a>
-      </p>
+
+      <div class="landing-side">
+        <figure class="tile tile--bha">
+          <div class="cell" data-ss-fill data-ss-wide><BhaPreview client:only="react" /></div>
+        </figure>
+        <figure class="tile tile--sheets">
+          <div class="cell cell--film"><video class="loop-film loop-film--fan" src="/loops/sheets.mp4?v=2" poster="/loops/sheets-poster.png?v=2" autoplay muted loop playsinline></video></div>
+          <figcaption><strong>Print Sheets.</strong> Six strap-sheet pages fan out for the wall.</figcaption>
+        </figure>
+      </div>
     </div>
-    <figure class="hero-figure">
-      <div class="hero-stage"><HeroEntry client:only="react" /></div>
-      <figcaption><strong>Two-process morphing workflow.</strong> BOX and PIN ends and thread types configure once, the active callout ring glides across the dark steel drawing, and the yellow metric block prints to PDF.</figcaption>
-    </figure>
   </section>
+  <script is:inline>
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.querySelectorAll("video.loop-film").forEach((video) => {
+        video.removeAttribute("autoplay");
+        video.pause();
+      });
+    }
+  </script>
 </Base>

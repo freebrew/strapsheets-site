@@ -226,7 +226,7 @@ function Screen({ s }: { s: Scene }) {
       </div>
 
       <nav className="real-tab-bar">
-        <span className="active">New entry</span>
+        <span className="active">New Entry</span>
         <span>Sessions (3)</span>
         <span>Settings</span>
       </nav>

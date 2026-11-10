@@ -159,25 +159,74 @@ body[data-page="home"] main::after {
   letter-spacing: 0.08em;
   color: var(--ss-accent-text);
 }
-.feature-grid {
+.landing {
   display: grid;
-  grid-template-columns: minmax(380px, 470px) minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-areas:
-    "bha custom custom"
-    "bha directory theme"
-    "bha wall wall";
+  grid-template-columns: minmax(460px, 0.86fr) minmax(0, 1.14fr);
+  grid-template-areas: "side quad";
   gap: 14px;
   align-items: stretch;
 }
-.tile--bha { grid-area: bha; display: flex; flex-direction: column; justify-content: space-between; }
-.tile--custom { grid-area: custom; }
-.tile--directory { grid-area: directory; }
-.tile--theme { grid-area: theme; }
-.tile--wall { grid-area: wall; }
+.landing-side {
+  grid-area: side;
+  display: grid;
+  grid-template-rows: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 14px;
+  /* The quad sets the row. This column stretches to that height and does not
+     grow the page from the BHA stage or the sheet video. */
+  height: 0;
+  min-height: 100%;
+  overflow: hidden;
+}
+.landing-quad {
+  grid-area: quad;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "copy entry"
+    "sessions settings";
+  gap: 14px;
+  align-items: stretch;
+}
+.tile--copy { grid-area: copy; }
+.tile--entry { grid-area: entry; }
+.tile--sessions { grid-area: sessions; }
+.tile--settings { grid-area: settings; }
+.tile--bha,
+.tile--sheets {
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tile--copy h1 { font-size: clamp(1.7rem, 2.2vw, 2.35rem); }
+.tile--copy .lede { font-size: 1rem; }
 
 .bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 1.4rem; }
-.bento figure, .section figure, .feature-grid figure { margin: 0; }
+.bento figure, .section figure, .feature-grid figure, .landing figure { margin: 0; }
 .cell { display: flex; align-items: center; justify-content: center; }
+.cell--film { width: 100%; }
+.loop-film {
+  display: block;
+  width: min(320px, 100%);
+  height: auto;
+  margin: 0 auto;
+  border-radius: 28px;
+  background: #12141a;
+}
+.loop-film--fan {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 12px;
+  background: #16181e;
+}
+.tile--sheets .cell--film { flex: 1; min-height: 0; height: 100%; }
+.tile--bha .cell,
+.tile--bha .cell > astro-island { flex: 1; min-height: 0; width: 100%; height: 100%; align-items: stretch; }
 .cell > astro-island { display: block; width: 100%; }
 .tile {
   background: color-mix(in srgb, var(--ss-surface) 96%, transparent);
@@ -263,18 +312,12 @@ th { color: var(--ss-text-faint); font-weight: 600; }
 footer.site { margin: 3rem auto; color: var(--ss-text-faint); font-size: 0.85rem; }
 
 @media (max-width: 1120px) {
-  .feature-grid {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "bha"
-      "custom"
-      "directory"
-      "theme"
-      "wall";
-  }
+  .landing { grid-template-columns: 1fr; grid-template-areas: "quad" "side"; }
+  .landing-side { height: auto; grid-template-rows: auto minmax(280px, 46vh); }
+  .tile--bha { height: auto; overflow: visible; }
 }
 @media (max-width: 800px) {
-  .hero-copy, .bento { grid-template-columns: 1fr; }
+  .landing-quad, .bento { grid-template-columns: 1fr; grid-template-areas: "copy" "entry" "sessions" "settings"; }
   h1 { font-size: 2rem; }
 }
 @media (min-width: 1100px) and (min-height: 720px) {
